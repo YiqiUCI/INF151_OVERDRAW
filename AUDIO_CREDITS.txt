@@ -1,0 +1,57 @@
+OVERDRAW music and sound effects credits (v1.2)
+
+1. Sword attacks
+Author: StarNinjas
+Pack: 20 Sword Sound Effects (Attacks and Clashes)
+Source: https://opengameart.org/content/20-sword-sound-effects-attacks-and-clashes
+Author profile: https://opengameart.org/users/starninjas
+Download: https://opengameart.org/sites/default/files/sword_-_starninjas_1.zip
+Embedded originals: sword.1.ogg, sword.4.ogg, sword.7.ogg
+License: CC0 1.0 Universal
+
+2. Player damage and fully blocked impacts
+Author: Kenney
+Pack: Impact Sounds (1.0)
+Source: https://kenney.nl/assets/impact-sounds
+Embedded originals:
+  Audio/impactPunch_medium_000.ogg
+  Audio/impactPunch_heavy_000.ogg
+  Audio/impactMetal_light_000.ogg
+License: CC0 1.0 Universal
+The original license notice is included as KENNEY_LICENSE.txt.
+
+CC0: https://creativecommons.org/publicdomain/zero/1.0/
+Both packs are marked CC0 on their source pages. Credit is voluntarily
+included for provenance. No sound samples were trimmed or re-encoded;
+playback volume is adjusted in the game. Audio is embedded as base64 Ogg.
+Source licenses checked: 2026-10-07.
+
+3. Background music
+Track: Dark Shrine Loop
+Remix author: qubodup / Iwan Gabovitch
+Original composition: Shrine by yd
+Remix source: https://opengameart.org/content/dark-shrine-loop
+Original source: https://opengameart.org/content/shrine
+Embedded original: qubodup-yd-DarkShrineLoop-OpenGameArt.ogg
+License: CC0 1.0 Universal (both the remix and original source pages)
+The downloaded Ogg is embedded without trimming or re-encoding.
+Playback is looped, with user-adjustable volume.
+
+4. Card draw, landing, play and reshuffle sounds
+Author: Kenney Vleugels / Kenney
+Pack: Casino Audio (1.1)
+Source: https://kenney.nl/assets/casino-audio
+Embedded originals:
+  Audio/card-slide-1.ogg
+  Audio/card-slide-4.ogg
+  Audio/card-place-1.ogg
+  Audio/card-shove-1.ogg
+  Audio/card-shuffle.ogg
+License: CC0 1.0 Universal
+The original license notice is included as KENNEY_CASINO_LICENSE.txt.
+
+No audio from Cult of the Lamb or Slay the Spire is included.
+Those games are mood and interaction references supplied by the team.
+
+Existing artwork is supplied by the project and is not covered by these
+audio licenses.

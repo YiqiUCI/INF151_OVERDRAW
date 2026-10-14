@@ -1,0 +1,113 @@
+{
+  "verified_date": "2026-10-07",
+  "assets": [
+    {
+      "id": "slash1",
+      "filename": "sword.1.ogg",
+      "license": "CC0-1.0",
+      "source": "https://opengameart.org/content/20-sword-sound-effects-attacks-and-clashes",
+      "duration_seconds": 0.967,
+      "size_bytes": 17794,
+      "sha256": "4a3e80705619cbd7500682ab51004011ddf67e14ccf1818ceb9e5b539fe42b75"
+    },
+    {
+      "id": "slash2",
+      "filename": "sword.4.ogg",
+      "license": "CC0-1.0",
+      "source": "https://opengameart.org/content/20-sword-sound-effects-attacks-and-clashes",
+      "duration_seconds": 0.581,
+      "size_bytes": 12874,
+      "sha256": "320aa8a77d35f9354c3d7e03a53e987ae67b0c5721f0dd2680100c5e6b5e4cc4"
+    },
+    {
+      "id": "slash3",
+      "filename": "sword.7.ogg",
+      "license": "CC0-1.0",
+      "source": "https://opengameart.org/content/20-sword-sound-effects-attacks-and-clashes",
+      "duration_seconds": 0.765,
+      "size_bytes": 13635,
+      "sha256": "66f2a2e63182fa14470a63fc4a862ff77fa861f69a6a41d8e9874c9853c2d9dd"
+    },
+    {
+      "id": "hurtLight",
+      "filename": "impactPunch_medium_000.ogg",
+      "license": "CC0-1.0",
+      "source": "https://kenney.nl/assets/impact-sounds",
+      "duration_seconds": 0.431,
+      "size_bytes": 8800,
+      "sha256": "486988aa2d6440ffc4c62a0e8ccf3c23673ba84424bd4723378d451b7255eb5c"
+    },
+    {
+      "id": "hurtHeavy",
+      "filename": "impactPunch_heavy_000.ogg",
+      "license": "CC0-1.0",
+      "source": "https://kenney.nl/assets/impact-sounds",
+      "duration_seconds": 0.649,
+      "size_bytes": 11617,
+      "sha256": "b33a8f14068aec24ec69ba85e5e87fdc41228975f6a1a3e44a6e7d6fc3d9f8d8"
+    },
+    {
+      "id": "block",
+      "filename": "impactMetal_light_000.ogg",
+      "license": "CC0-1.0",
+      "source": "https://kenney.nl/assets/impact-sounds",
+      "duration_seconds": 0.351,
+      "size_bytes": 7651,
+      "sha256": "33b5e6e37c6e9d54e07bf5a89b12c76e879f40c1ea83cdd82714df1d6f9fec6d"
+    },
+    {
+      "id": "cardDraw1",
+      "filename": "card-slide-1.ogg",
+      "license": "CC0-1.0",
+      "source": "https://kenney.nl/assets/casino-audio",
+      "duration_seconds": 0.601,
+      "size_bytes": 8833,
+      "sha256": "006cf9822d15d7063f8899e56041f41646df30adb6fbd8b974ee5d5420012690"
+    },
+    {
+      "id": "cardDraw2",
+      "filename": "card-slide-4.ogg",
+      "license": "CC0-1.0",
+      "source": "https://kenney.nl/assets/casino-audio",
+      "duration_seconds": 0.459,
+      "size_bytes": 7912,
+      "sha256": "b9c82bcdbe6b7d00a06e2546bd2683a9ab082ca5fd090a42882f33eddd925b7f"
+    },
+    {
+      "id": "cardPlace",
+      "filename": "card-place-1.ogg",
+      "license": "CC0-1.0",
+      "source": "https://kenney.nl/assets/casino-audio",
+      "duration_seconds": 0.689,
+      "size_bytes": 9624,
+      "sha256": "d8f26c33a665dcbdcc6f632f6050bc9dd548feb0d4942d4547615926d3926810"
+    },
+    {
+      "id": "cardPlay",
+      "filename": "card-shove-1.ogg",
+      "license": "CC0-1.0",
+      "source": "https://kenney.nl/assets/casino-audio",
+      "duration_seconds": 0.766,
+      "size_bytes": 10690,
+      "sha256": "1ea667aa6795d5f14239192116ebcbd8f3f47eb1c7faaf2ec56844b9067b8b06"
+    },
+    {
+      "id": "cardShuffle",
+      "filename": "card-shuffle.ogg",
+      "license": "CC0-1.0",
+      "source": "https://kenney.nl/assets/casino-audio",
+      "duration_seconds": 3.063,
+      "size_bytes": 30002,
+      "sha256": "96c84883a30845ede723a4cf2e8369e9837e7dd4e0d4eb0212b0a7ed21b0f544"
+    },
+    {
+      "id": "BGM",
+      "filename": "qubodup-yd-DarkShrineLoop-OpenGameArt.ogg",
+      "license": "CC0-1.0",
+      "source": "https://opengameart.org/content/dark-shrine-loop",
+      "duration_seconds": 56.573,
+      "size_bytes": 678630,
+      "sha256": "9580618dc851f70c3a11b5ff87672867de44cd38b35dabf926d6befde20e78d0"
+    }
+  ]
+}
