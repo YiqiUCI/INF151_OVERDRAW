@@ -147,45 +147,86 @@ nav button[aria-pressed='false'] { color: var(--muted); }
 </style>
 
 <style>
-/* New encounter art shares the existing breathing and combat feedback. */
-.shell { --scene-art-height: calc(min(100vw, 1440px) * .62547); }
-.shell.has-custom-monster .scene {
+/* New encounter portraits sit behind the original tabletop. */
+.shell {
+ --scene-art-height: calc(min(100vw, 1440px) * .62587);
+ --table-y: calc(var(--scene-art-height) * .432);
+}
+.shell.has-custom-monster .scene:not(.table-foreground) {
  mask-image: radial-gradient(ellipse calc(var(--scene-art-height) * .20) calc(var(--scene-art-height) * .17) at 50% calc(var(--scene-art-height) * .28), transparent 72%, #000 100%);
 }
+.enemy-portrait-window {
+ position: absolute;
+ inset: 0;
+ z-index: -2;
+ pointer-events: none;
+}
+.shell.has-custom-monster .enemy-portrait-window {
+ clip-path: polygon(0 0, 100% 0, 100% var(--table-y), 0 var(--table-y));
+}
+.table-foreground {
+ display: none;
+ position: absolute;
+ inset: 0;
+ z-index: -1;
+ pointer-events: none;
+ background-size: 100% auto;
+ background-position: center top;
+ background-repeat: no-repeat;
+ clip-path: polygon(0 var(--table-y), 100% var(--table-y), 100% 100%, 0 100%);
+ opacity: 1;
+}
+.shell.has-custom-monster .scene { opacity: 1; }
+.shell.has-custom-monster .table-foreground { display: block; }
+.shell.has-custom-monster .stage { min-height: calc(var(--scene-art-height) * .47); }
 .original-keeper.custom-monster {
  --keeper-offset: -50%;
- inset: 12px auto auto 50%;
- width: clamp(240px, 30vw, 380px);
- height: 300px;
+ inset: 8px auto auto calc(50% + var(--scene-art-height) * .12);
+ width: calc(var(--scene-art-height) * .706);
+ height: calc(var(--scene-art-height) * .60);
  aspect-ratio: auto;
  background-size: contain;
- background-position: center bottom;
+ background-position: center top;
  background-repeat: no-repeat;
  mask-image: none;
  opacity: 1;
 }
-.original-keeper.priest-art { height: 314px; }
+.original-keeper.custom-monster:not(.priest-art) {
+ mask-image: linear-gradient(to right, #000 65%, transparent 80%);
+}
+.original-keeper.priest-art {
+ --priest-height: min(calc(var(--scene-art-height) * .72), 144vw);
+ left: 50%;
+ width: calc(var(--priest-height) * .66667);
+ height: var(--priest-height);
+}
 .path { flex-wrap: wrap; justify-content: center; }
 .path span.complete { color: var(--green); }
 .path span.active { color: var(--red); }
 @media(max-width:1050px) {
  .shell { --scene-art-height: 860px; }
- .original-keeper.custom-monster { top: 8px; height: 275px; width: 300px; }
- .original-keeper.priest-art { height: 284px; }
+ .table-foreground { background-size: auto 860px; }
 }
 @media(max-width:600px) {
  .shell { --scene-art-height: 740px; }
+ .table-foreground { background-size: auto 740px; }
  .path { width: 100%; order: 2; margin-left: 0; }
- .shell.has-custom-monster .stage { min-height: 430px; }
- .original-keeper.custom-monster { top: 6px; height: 175px; width: 205px; }
- .original-keeper.priest-art { height: 194px; }
+ .shell.has-custom-monster .stage {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+  gap: 16px;
+  min-height: 0;
+  padding-top: calc(var(--table-y) + 18px);
+ }
+ .shell.has-custom-monster .health { width: auto; }
 }
 </style>
 </head>
 <body>
 <div class="damage-overlay" id="damageOverlay" aria-hidden="true"></div>
 <header><h1>OVERDRAW</h1><div class="path" aria-label="Run progress"><span id="step0" class="active">Gatekeeper</span><i></i><span id="step1">Candle-Eye Slug</span><i></i><span id="step2">Priest (Boss)</span></div><nav aria-label="Game options"><button id="help">How to play</button><button id="deck">Deck</button><button id="restart">Restart</button><button id="export">Export log</button><button id="soundToggle" aria-pressed="true">SFX: On</button><button id="musicToggle" aria-pressed="true">Music: On</button></nav></header>
-<main class="shell" id="shell"><div class="scene" aria-hidden="true"></div><div class="original-keeper" id="enemyArt" aria-hidden="true"></div><div class="slash-effect" id="slashEffect" aria-hidden="true"></div>
+<main class="shell" id="shell"><div class="scene" aria-hidden="true"></div><div class="enemy-portrait-window" aria-hidden="true"><div class="original-keeper" id="enemyArt" aria-hidden="true"></div></div><div class="scene table-foreground" aria-hidden="true"></div><div class="slash-effect" id="slashEffect" aria-hidden="true"></div>
 <section class="stage" aria-label="Combatants"><div class="health"><h2>You</h2><div class="hp"><span id="playerHP">40</span> <small>/ 40 HP</small></div><div class="bar" role="meter" aria-label="Your HP" aria-valuemin="0" aria-valuemax="40" id="playerMeter"><span id="playerBar"></span></div><div id="relic" class="relic" hidden>Quiet Counter · 3+ cards: +2 Block</div></div><div class="health enemy"><h2 id="enemyName">Gatekeeper</h2><div class="hp"><span id="enemyHP">24</span> <small id="enemyMax">/ 24 HP</small></div><div class="bar" role="meter" aria-label="Enemy HP" aria-valuemin="0" id="enemyMeter"><span id="enemyBar"></span></div><div class="intent"><span>Enemy intent</span><strong id="intent">Attack 5</strong></div></div><div class="turn-tag" id="turnTag">Encounter 1 of 3 · Turn 1</div></section>
 <section class="metrics" aria-label="Turn resources"><div class="metric"><label for="point">Point</label><strong><span id="point">0</span><small> / 21</small></strong></div><div class="metric damage"><label id="damageLabel" for="damage">Pending damage</label><strong id="damage">0</strong></div><div class="metric block"><label id="blockLabel" for="block">Pending Block</label><strong id="block">0</strong></div></section>
 <div id="status" class="status" role="status" aria-live="polite">Hit to draw your first card. Stand to keep what you build.</div>

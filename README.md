@@ -28,6 +28,11 @@ The new enemies share the existing breathing movement, attack and damage
 feedback, card animations, sound effects, and background music. Their original
 PNG files are in **assets/monsters/**, and copies are embedded in the game.
 
+Both portraits are enlarged and placed behind the original tabletop. The
+Priest is visible to the waist; the Slug shows its head, shoulders, cards,
+and the tops of its hands. The table edge stays fixed during breathing and
+combat feedback.
+
 ## Controls
 
 - **H / HIT:** draw a card.
