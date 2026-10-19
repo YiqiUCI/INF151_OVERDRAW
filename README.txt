@@ -1,68 +1,43 @@
-OVERDRAW - Atmosphere Playtest (v1.3)
-
-CHANGES IN v1.3
-The next-draw bust risk hint and risk percentages in the draw log have been removed.
-The resource bar now shows Point, damage and Block. Audio and animations are unchanged.
+OVERDRAW - Three-Encounter Playtest (v1.4)
 
 HOW TO PLAY
-Extract the ZIP and double-click prototype.html in your browser.
-Everything is embedded in that HTML file, including music and sound effects.
-It can be played offline without a local server.
+Open prototype.html in a browser. All art and audio are embedded, so it works
+offline without a server. H draws, S stands, and N starts the next turn.
 
-HIT / H: Draw a card from the pile on the left. The card flies into your chain
-and flips face up, with a slide sound and a quiet landing sound.
-STAND / S: Send your current chain toward the enemy. A card movement sound
-plays first, then the sword attack and any enemy retaliation.
-NEXT TURN / N: Discard the resolved chain and reveal the next enemy intent.
+ENCOUNTERS
+1. Gatekeeper: 24 HP; attacks repeat 5, 7, 4.
+2. Candle-Eye Slug: 32 HP; attacks repeat 6, 8, 5.
+3. Deer-Bone Priest (Boss): 42 HP; attacks repeat 7, 10, 8.
 
-The short animation locks combat inputs so repeated clicks or keypresses
-cannot create duplicate draws or turns. Restart cancels unfinished flights.
-Fully blocked attacks do not flash red. Defeated enemies cannot retaliate.
+All three use the original combat rules, animations, and audio feedback.
+Unique Boss mechanics are deferred. Busts do not strengthen future attacks.
 
-AUDIO CONTROLS
-SFX: On / Off controls all card and combat sound effects.
-Music: On / Off controls the looping Dark Shrine Loop background track.
-Music volume is below the action buttons. The default is a quiet 18%; the
-slider ranges from 0% to 50%. Preferences are saved locally when available.
-Browser autoplay rules require the first click or H/S/N keypress before
-music can begin. Music pauses while the page is hidden.
+Every defeated enemy offers Set Up, Fortify, or Clean Finish, or Skip.
+HP and earned cards carry forward. Quiet Counter is acquired once after the
+Gatekeeper. The final Boss offers a reward before the victory screen.
 
-The music is a free CC0 mysterious shrine/cult themed loop. Cult of the Lamb
-is a mood reference supplied by the team; its soundtrack is not included.
-Existing project artwork is retained. Monster breathing uses a small movement
-of the existing masked image, not a new sprite animation.
-System reduced-motion preferences skip card flights and monster breathing.
+SFX, Music, and the volume slider control audio. The first interaction unlocks
+music. Reduced-motion preferences disable card flights and monster breathing.
+Restart offers a fresh shuffle or the original repeatable opening.
 
-LICENSES AND SOURCES
-All added music and sound effects come from sources marked CC0.
-AUDIO_CREDITS.txt lists authors, source pages and original filenames.
-AUDIO_MANIFEST.json records the embedded audio files and their SHA-256 hashes.
-Original Kenney license notices are included in this folder.
-
-VERIFICATION
-JavaScript syntax check passed. 23 logic checks passed, including comparison
-with the original game's card/HP/turn rules, animation sequencing, repeated
-input, busts, block, kills, rewards, restart, mute and music preferences.
-Audio Ogg containers and the ZIP archive were checked for integrity.
-Browser rendering and actual sound playback have not been verified in this
-environment. Check the animation speed and listening volume on your machine.
+See README.md for controls, rules, and the automated test command.
+AUDIO_CREDITS.txt, AUDIO_MANIFEST.json, and the Kenney license files list sources.
 
 ---------------------------------------------------------------------
 
-OVERDRAW - 氛围试玩版 v1.3
+OVERDRAW - 三场战斗试玩版 v1.4
 
-已移除下次抽牌爆点风险提示和抽牌日志中的风险百分比。
-数值栏保留 Point、伤害与格挡；音效、音乐和动画保持原样。
+双击 prototype.html 即可离线游玩。图片、音乐和音效均已内嵌。
+H 抽牌，S 停牌并结算，N 进入下一回合。
 
-解压后双击 prototype.html 即可离线游玩。
-H 抽牌：卡牌从左侧牌库飞进手牌并翻面，配抽牌和落牌声。
-S 结算：整条手牌飞向怪物，再播放挥砍和敌人反击反馈。
-N 下一回合。动画期间会暂时锁住操作，避免重复抽牌。
+第一战：原怪 Gatekeeper，24 HP。
+第二战：烛眼蛞蝓 Candle-Eye Slug，32 HP。
+第三战：鹿骨祭司 Deer-Bone Priest，42 HP，作为 Boss。
+
+三只怪物沿用原怪的战斗规则、动画和音效反馈。Boss 专属机制后续添加。
+每场胜利后都可以三选一卡牌或跳过；血量和已获得的卡牌带入下一场。
+最终 Boss 战后同样有奖励，选取或跳过后显示通关。
+Quiet Counter 遗物只在第一战后获得一次。
 
 SFX 控制音效，Music 控制背景音乐，下方滑杆调整音乐音量。
-第一次点击或按 H/S/N 后音乐开始；切到别的标签页时音乐暂停。
-新增音乐与音效均选用标为 CC0 的免费素材，来源见 AUDIO_CREDITS.txt。
-咩咩启示录只是氛围参考，本版本没有使用它的原声。
-
-原有卡牌、血量和战斗规则保持原样。23 项逻辑检查已通过；
-实际画面和听感尚未完成浏览器实测。
+重新开始可选择随机牌序或原来的固定开局。
