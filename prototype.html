@@ -181,6 +181,7 @@ nav button[aria-pressed='false'] { color: var(--muted); }
 .shell.has-custom-monster .stage { min-height: calc(var(--scene-art-height) * .47); }
 .original-keeper.custom-monster {
  --keeper-offset: -50%;
+ transform: translateX(var(--keeper-offset));
  inset: 8px auto auto calc(50% + var(--scene-art-height) * .12);
  width: calc(var(--scene-art-height) * .706);
  height: calc(var(--scene-art-height) * .60);
