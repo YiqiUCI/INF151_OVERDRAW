@@ -4,18 +4,93 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 
-const html = fs.readFileSync(path.join(__dirname, '..', 'prototype.html'), 'utf8');
+const html = fs.readFileSync(path.join(__dirname, '..', 'OVERDRAW.html'), 'utf8');
 const script = html.match(/<script>([\s\S]*?)<\/script>/)[1];
+new vm.Script(script); // Parse all UI/audio code as well as the extracted rules.
 const rules = script.slice(0, script.indexOf('const $='));
 const context = vm.createContext({});
 vm.runInContext(rules + '\nthis.rules = { Game, ENEMIES, CARDS };', context);
-const { Game, ENEMIES } = context.rules;
+const { Game, ENEMIES, CARDS } = context.rules;
 
 function defeatEnemy(game) {
   game.enemyHP = 1;
   game.chain = ['quick'];
   game.stand();
 }
+
+test('all twelve starter cards cost at least 5 Point without changing the deck composition', () => {
+  for (const random of [false, true]) {
+    const game = new Game();
+    game.restart(random);
+    assert.equal(game.deck.length, 12);
+    assert.ok(game.draw.every(key => CARDS[key].point >= 5));
+    for (const key of ['quick', 'brace', 'follow', 'heavy', 'precision', 'last']) {
+      assert.equal(game.deck.filter(card => card === key).length, 2);
+    }
+    assert.deepEqual(Array.from(['quick', 'brace', 'follow', 'heavy', 'precision', 'last'], key => CARDS[key].point), [5, 5, 5, 7, 5, 8]);
+  }
+  assert.deepEqual(Array.from(['setup', 'fortify', 'clean'], key => CARDS[key].point), [1, 3, 6]);
+});
+
+test('four consecutive starter draws now bust in more than 80 percent of possible hands', () => {
+  const points = new Game().deck.map(key => CARDS[key].point);
+  let hands = 0, busts = 0;
+  for (let a = 0; a < 9; a++) for (let b = a + 1; b < 10; b++)
+    for (let c = b + 1; c < 11; c++) for (let d = c + 1; d < 12; d++) {
+      hands++;
+      if (points[a] + points[b] + points[c] + points[d] > 21) busts++;
+    }
+  assert.ok(busts / hands > .8, `Four-draw Bust rate: ${busts}/${hands}`);
+});
+
+test('card damage keeps every original attack number and replaces the value field and labels', () => {
+  assert.deepEqual(Array.from(['quick', 'brace', 'follow', 'heavy', 'precision', 'last', 'setup', 'fortify', 'clean'], key => CARDS[key].damage), [3, 2, 5, 10, 6, 12, 1, 2, 8]);
+  assert.ok(Object.values(CARDS).every(card => !Object.hasOwn(card, 'value')));
+  assert.ok(!/\bVALUE\b|<th>Value<\/th>|<b>Value<\/b>|（Value）|Value is base damage/.test(html));
+  assert.ok(html.includes("'DAMAGE'"));
+  assert.ok(html.includes('<th>Damage</th>'));
+  assert.ok(html.includes('（Damage）'));
+  assert.ok(html.includes('value="18"'), 'Music slider values remain valid');
+});
+
+test('the same repeatable cards now reach 17 Point and a fourth draw busts at 24', () => {
+  const stand = new Game();
+  for (let i = 0; i < 3; i++) stand.hit();
+  assert.equal(stand.points(), 17);
+  assert.equal(stand.output().damage, 18);
+  assert.equal(stand.output().block, 4);
+  stand.stand();
+  assert.equal(stand.enemyHP, 6);
+  assert.equal(stand.hp, 39);
+  const bust = new Game();
+  for (let i = 0; i < 4; i++) bust.hit();
+  assert.equal(bust.points(), 24);
+  assert.equal(bust.phase, 'resolved');
+  assert.equal(bust.output().damage, 0);
+  assert.equal(bust.output().block, 0);
+  assert.equal(bust.enemyHP, 24);
+  assert.equal(bust.hp, 35);
+});
+
+test('hand and reward card markup displays the actual damage in both languages', () => {
+  const markup = script.match(/^function cardHTML\([^\n]+/m)[0];
+  const ui = vm.createContext({
+    CARDS, game: new Game(), currentLanguage: 'en',
+    CARD_ART: Object.fromEntries(Object.keys(CARDS).map(key => [key, `art:${key}`])),
+    cardName: key => CARDS[key].name,
+    cardEffect: key => CARDS[key].effect
+  });
+  vm.runInContext(markup, ui);
+  for (const reward of [false, true]) {
+    const en = vm.runInContext(`cardHTML('quick', 0, ${reward})`, ui);
+    assert.ok(en.includes('<b>3</b> DAMAGE'));
+    assert.ok(en.includes('<strong>5</strong> POINT'));
+    assert.ok(!en.includes('VALUE'));
+    ui.currentLanguage = 'zh';
+    assert.ok(vm.runInContext(`cardHTML('quick', 0, ${reward})`, ui).includes('<b>3</b> 伤害值'));
+    ui.currentLanguage = 'en';
+  }
+});
 
 test('the run has Gatekeeper, Candle-Eye Slug, then Deer-Bone Priest as Boss', () => {
   assert.deepEqual(Array.from(ENEMIES, enemy => enemy.name), [
