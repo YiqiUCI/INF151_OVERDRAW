@@ -1,8 +1,15 @@
-OVERDRAW - Three-Encounter Playtest (v1.4)
+OVERDRAW - Three-Encounter Playtest (v1.5)
 
 HOW TO PLAY
-Open prototype.html in a browser. All art and audio are embedded, so it works
+Open OVERDRAW.html in a browser. All art and audio are embedded, so it works
 offline without a server. H draws, S stands, and N starts the next turn.
+
+STARTER DECK UPDATE
+Quick Cut, Brace, Follow Through and Precision: 5 Point each.
+Heavy Strike: 7 Point. Last Word: 8 Point. Two copies of each.
+All card attack numbers are labelled Damage; those numbers are unchanged.
+Reward Point costs remain 1 / 3 / 6. Four-card starter totals exceed 21 in
+about 85.9% of possible hands; actual player Bust rates depend on decisions.
 
 ENCOUNTERS
 1. Gatekeeper: 24 HP; attacks repeat 5, 7, 4.
@@ -25,10 +32,15 @@ AUDIO_CREDITS.txt, AUDIO_MANIFEST.json, and the Kenney license files list source
 
 ---------------------------------------------------------------------
 
-OVERDRAW - 三场战斗试玩版 v1.4
+OVERDRAW - 三场战斗试玩版 v1.5
 
-双击 prototype.html 即可离线游玩。图片、音乐和音效均已内嵌。
+双击 OVERDRAW.html 即可离线游玩。图片、音乐和音效均已内嵌。
 H 抽牌，S 停牌并结算，N 进入下一回合。
+
+初始牌库最低 5 Point，每种牌仍各两张：5 / 5 / 5 / 7 / 5 / 8。
+卡牌武器伤害原称 Value，现统一显示为 Damage，伤害数值保持原样。
+奖励牌保留 1 / 3 / 6 Point。原固定开局前三张为 17 Point、18 Damage、
+4 Block；第四张会达到 24 Point 并爆牌。
 
 第一战：原怪 Gatekeeper，24 HP。
 第二战：烛眼蛞蝓 Candle-Eye Slug，32 HP。

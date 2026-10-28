@@ -2,11 +2,34 @@
 
 A deckbuilding combat prototype built around the risk of going over 21.
 
-Download the project and open **prototype.html** in a browser. The game,
+Download the project and open **OVERDRAW.html** in a browser. The game,
 artwork, music, and sound effects are embedded in this file, so it works
 offline without installing dependencies or starting a server.
 
-## Three-encounter build (v1.4)
+## Three-encounter build (v1.5)
+
+The starter deck now has a minimum cost of **5 Point** per card. Every card
+still has two starter copies. Base attack numbers are unchanged and are now
+labelled **Damage**, including cards, the deck list, and the English/Chinese help.
+
+| Starter card | Point | Damage |
+| --- | --- | --- |
+| Quick Cut | 5 | 3 |
+| Brace | 5 | 2 |
+| Follow Through | 5 | 5 |
+| Heavy Strike | 7 | 10 |
+| Precision | 5 | 6 |
+| Last Word | 8 | 12 |
+
+Reward Point costs remain Set Up 1, Fortify 3, and Clean Finish 6. In a
+fresh starter shuffle, four consecutive draws exceed 21 in **425 of 495**
+possible four-card combinations (about **85.9%**, previously 28.7%). This is
+a deck probability, not an observed participant Bust rate.
+
+The repeatable opening keeps Brace → Heavy Strike → Precision: **17 Point,
+18 Damage, 4 Block**. Stand leaves the Gatekeeper at 6 HP and you at 39 HP.
+The fourth Heavy Strike causes a **24 Point Bust**, leaving the enemy at
+24 HP and you at 35 HP. Exported logs identify this build as v1.5.
 
 | Encounter | Enemy | HP | Repeating attacks |
 | --- | --- | --- | --- |
@@ -55,12 +78,15 @@ With Node.js installed, run:
 node --test tests/game.test.cjs
 ```
 
-The tests cover encounter order, all three reward screens, final victory,
+The tests cover the starter Point floor, increased four-draw Bust risk,
+Damage fields and bilingual card labels, the revised repeatable opening,
+encounter order, all three reward screens, final victory,
 HP and deck carryover, attack cycles, busts, defeated-enemy retaliation,
 duplicate reward prevention, Quiet Counter, defeat, and restart.
 
-The three-encounter flow was also exercised in headless Microsoft Edge.
-Desktop (1440 × 1100) and mobile (390 × 844) layouts were checked. Actual
+The earlier three-encounter build was exercised in headless Microsoft Edge
+at desktop and mobile sizes. This v1.5 change was verified with Node.js
+rules and card-markup tests; browser rendering was not rechecked. Actual
 listening volume and game balance still need player testing.
 
 Audio sources and licenses are listed in **AUDIO_CREDITS.txt** and
