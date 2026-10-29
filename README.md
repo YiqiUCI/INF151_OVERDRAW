@@ -2,7 +2,7 @@
 
 A deckbuilding combat prototype built around the risk of going over 21.
 
-Download the project and open **prototype.html** in a browser. The game,
+Download the project and open **OVERDRAW.html** in a browser. The game,
 artwork, music, and sound effects are embedded in this file, so it works
 offline without installing dependencies or starting a server.
 
@@ -18,8 +18,10 @@ All three enemies use the original combat rules. The Priest is currently
 distinguished by its artwork, Boss label, and higher stats. Dedicated Boss
 mechanics are deferred; busts do not increase future enemy attacks.
 
-Every defeated enemy offers the same three card rewards: **Set Up**,
-**Fortify**, or **Clean Finish**. Choose one or Skip. HP and earned cards
+The starting deck has three each of the 5, 6, 7, and 8 Point cards.
+Every defeated enemy offers three distinct random card rewards or Skip. Cards
+below 4 Point have one-third the weight of higher-point cards in each draw.
+HP and earned cards
 carry into the next encounter. Quiet Counter is granted once, after the
 Gatekeeper. The final Boss also gives a reward; claiming or skipping it
 completes the run.
@@ -38,7 +40,7 @@ combat feedback.
 - **H / HIT:** draw a card.
 - **S / STAND:** resolve your chain.
 - **N / NEXT TURN:** discard the resolved chain and start the next turn.
-- **Deck:** inspect the current deck.
+- **Draw pile:** click the left-hand pile to inspect the current deck.
 - **Restart:** choose a fresh shuffle or the repeatable opening.
 - **SFX / Music / Music volume:** adjust audio.
 - **Export log:** download this browser's run history.

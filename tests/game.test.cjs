@@ -4,17 +4,18 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 
-const html = fs.readFileSync(path.join(__dirname, '..', 'prototype.html'), 'utf8');
+const html = fs.readFileSync(path.join(__dirname, '..', 'OVERDRAW.html'), 'utf8');
 const script = html.match(/<script>([\s\S]*?)<\/script>/)[1];
 const rules = script.slice(0, script.indexOf('const $='));
 const context = vm.createContext({});
-vm.runInContext(rules + '\nthis.rules = { Game, ENEMIES, CARDS };', context);
-const { Game, ENEMIES } = context.rules;
+vm.runInContext(rules + '\nthis.rules = { Game, ENEMIES, CARDS, rollRewardChoices };', context);
+const { Game, ENEMIES, CARDS, rollRewardChoices } = context.rules;
 
 function defeatEnemy(game) {
   game.enemyHP = 1;
   game.chain = ['quick'];
   game.stand();
+  game.rewardChoices = ['setup', 'fortify', 'clean'];
 }
 
 test('the run has Gatekeeper, Candle-Eye Slug, then Deer-Bone Priest as Boss', () => {
@@ -157,6 +158,36 @@ test('Restart resets a completed run to the original repeatable opening', () => 
   assert.equal(game.deck.length, 12);
   assert.equal(game.relic, false);
   assert.equal(game.phase, 'drawing');
-  assert.deepEqual(Array.from(game.draw.slice(0, 4)), ['brace', 'heavy', 'precision', 'heavy']);
+  assert.deepEqual(Array.from(game.draw.slice(0, 4)), ['precision', 'heavy', 'clean', 'last']);
   assert.equal(game.archive[0].status, 'victory');
+});
+
+
+test('starting deck contains three each of points 5, 6, 7 and 8 in both modes', () => {
+  const game = new Game();
+  for (const random of [false, true]) {
+    game.restart(random);
+    assert.deepEqual(Array.from(game.deck, k => CARDS[k].point).sort((a, b) => a - b), [5,5,5,6,6,6,7,7,7,8,8,8]);
+    assert.deepEqual(Array.from(game.draw).sort(), Array.from(game.deck).sort());
+  }
+});
+
+test('rewards offer three unique cards with lower weight for cards under 4 points', () => {
+  let lowFirst = 0;
+  for (let i = 0; i < 20000; i++) {
+    const choices = rollRewardChoices();
+    assert.equal(new Set(choices).size, 3);
+    if (CARDS[choices[0]].point < 4) lowFirst++;
+  }
+  assert.ok(lowFirst / 20000 > 0.19 && lowFirst / 20000 < 0.23, `low-point rate: ${lowFirst / 20000}`);
+  const game = new Game();
+  game.enemyHP = 1;
+  game.chain = ['precision'];
+  game.stand();
+  assert.equal(game.phase, 'reward');
+  const rejected = Object.keys(CARDS).find(key => !game.rewardChoices.includes(key));
+  game.reward(rejected);
+  assert.equal(game.phase, 'reward');
+  game.reward(game.rewardChoices[0]);
+  assert.equal(game.phase, 'drawing');
 });
