@@ -117,7 +117,9 @@ nav button[aria-pressed='false'] { color: var(--muted); }
 .draw-pile:before, .flight-back:before { content: ''; position: absolute; inset: 6px; border: 1px solid #8b6752; border-radius: 2px; }
 .deck-rune { font: 30px var(--serif); color: #d9b38b; }
 .draw-pile strong { font: 21px var(--serif); color: var(--cream); }
-.deck-caption { text-transform: uppercase; font-size: 10px; color: var(--muted); letter-spacing: 1px; }
+.deck-caption { text-transform: uppercase; font-size: 9px; color: var(--cream); letter-spacing: .4px; line-height: 1.1; }
+.draw-pile { cursor: pointer; }
+.draw-pile:hover, .draw-pile:focus-visible { border-color: var(--cream); filter: brightness(1.2); }
 .discard-slot { width: 72px; min-height: 43px; border: 1px dashed #6b5343; border-radius: 3px; display: flex; align-items: center; justify-content: center; gap: 6px; color: var(--muted); font-size: 10px; }
 .discard-slot strong { color: var(--cream); font-size: 14px; }
 .draw-pile.drawing { animation: deck-pulse .42s ease-out; }
@@ -273,7 +275,7 @@ nav button[aria-pressed='false'] { color: var(--muted); }
 <section class="stage" aria-label="Combatants"><div class="health"><h2>You</h2><div class="hp"><span id="playerHP">40</span> <small>/ 40 HP</small></div><div class="bar" role="meter" aria-label="Your HP" aria-valuemin="0" aria-valuemax="40" id="playerMeter"><span id="playerBar"></span></div><div id="relic" class="relic" hidden>Quiet Counter · 3+ cards: +2 Block</div></div><div class="health enemy"><h2 id="enemyName">Gatekeeper</h2><div class="hp"><span id="enemyHP">24</span> <small id="enemyMax">/ 24 HP</small></div><div class="bar" role="meter" aria-label="Enemy HP" aria-valuemin="0" id="enemyMeter"><span id="enemyBar"></span></div><div class="intent"><span>Enemy intent</span><strong id="intent">Attack 5</strong></div></div><div class="turn-tag" id="turnTag">Encounter 1 of 3 · Turn 1</div></section>
 <section class="metrics" aria-label="Turn resources"><div class="metric"><label for="point">Point</label><strong><span id="point">0</span><small> / 21</small></strong></div><div class="metric damage"><label id="damageLabel" for="damage">Pending damage</label><strong id="damage">0</strong></div><div class="metric block"><label id="blockLabel" for="block">Pending Block</label><strong id="block">0</strong></div></section>
 <div id="status" class="status" role="status" aria-live="polite">Hit to draw your first card. Stand to keep what you build.</div>
-<div class="hand-zone"><aside class="deck-rail" aria-label="Card piles"><button class="draw-pile" id="drawPile" aria-label="View deck"><span class="deck-rune" aria-hidden="true">XXI</span><strong id="drawCount">12</strong></button><span class="deck-caption">View deck</span><div class="discard-slot"><span>Discard</span><strong id="discardCount">0</strong></div></aside><section class="hand" id="hand" aria-label="Your card chain"></section></div>
+<div class="hand-zone"><aside class="deck-rail" aria-label="Card piles"><button class="draw-pile" id="drawPile" aria-label="View deck"><span class="deck-rune" aria-hidden="true">XXI</span><strong id="drawCount">12</strong><span class="deck-caption" id="deckCaption">View deck</span></button><div class="discard-slot"><span>Discard</span><strong id="discardCount">0</strong></div></aside><section class="hand" id="hand" aria-label="Your card chain"></section></div>
 <section class="reward-area" id="rewardArea" aria-label="Card reward"><h2 id="rewardTitle">Choose your next advantage.</h2><p id="rewardCopy"></p><div class="reward-hand" id="rewardHand"></div><button id="skip" class="text-button">Skip reward</button></section>
 <section class="ending end-polished" id="ending"><div id="endResult" class="end-result"></div><h2 id="endTitle"></h2><p id="endCopy" class="end-subtitle"></p><div id="endNumbers" class="numbers"></div></section>
 <div class="controls"><button class="action" id="hit">HIT <kbd>H</kbd></button><button class="action light" id="stand">STAND <kbd>S</kbd></button><button class="action light" id="next" hidden>NEXT TURN <kbd>N</kbd></button><button class="action" id="playAgain" hidden>NEW RUN</button><button class="action light" id="endMenu" hidden>MAIN MENU</button></div>
@@ -960,7 +962,7 @@ function applyLanguageToUI(){
   $('hand').innerHTML=game.chain.length?game.chain.map((k,i)=>cardHTML(k,i)).join(''):`<div class="empty-hand"><div class="seal" aria-hidden="true">XXI</div><p>${currentLanguage==='zh'?'下一份献祭正在等待。':'Your next offering awaits.'}</p><small>${currentLanguage==='zh'?'抽取一张卡牌，开始连锁。':'Draw a card to begin your chain.'}</small></div>`;
   if(game.phase==='reward')$('rewardHand').innerHTML=game.rewardChoices.map(k=>cardHTML(k,0,true)).join('');
 
-  $('drawPile').nextElementSibling.textContent = currentLanguage==='zh'?'查看牌组':'View deck';
+  $('deckCaption').textContent = currentLanguage==='zh'?'查看牌组':'View deck';
   $('drawPile').setAttribute('aria-label', (currentLanguage==='zh'?'查看牌组。抽牌堆剩余 ':'View deck. Cards in draw pile: ') + game.draw.length);
   $('drawPile').parentElement.querySelector('.discard-slot span').textContent = t('discard');
   $('point').parentElement.previousElementSibling.textContent = t('point');
