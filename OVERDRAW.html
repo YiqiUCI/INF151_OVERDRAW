@@ -289,6 +289,46 @@ nav button[aria-pressed='false'] { color: var(--muted); }
  .route-key{gap:6px 12px}
 }
 </style>
+<style>
+.node-screen{width:min(1060px,calc(100% - 32px));margin:20px auto 26px;border:1px solid var(--line);background:#151211;box-shadow:0 12px 35px #0006}
+.node-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px 20px;padding:15px clamp(14px,3vw,30px);border-bottom:1px solid var(--line);background:#191513}
+.node-header h2{font:700 clamp(24px,4vw,34px)/1.15 var(--serif);margin:0}
+.node-meta{display:flex;align-items:center;flex-wrap:wrap;gap:8px 15px;color:var(--cream)}
+.node-meta button{padding-block:5px}
+.coin-count{color:#e2be75}
+.node-table{position:relative;isolation:isolate;overflow:hidden;padding:clamp(18px,4vw,34px) clamp(12px,4vw,38px) 30px;text-align:center}
+.node-table::before{content:'';position:absolute;z-index:-1;top:107px;left:-40%;right:-40%;bottom:-70%;border-radius:50% 50% 0 0 / 16% 16% 0 0;border-top:2px solid #773a35;background:radial-gradient(ellipse at 50% 0,#402521,#211919 55%,#191513)}
+.node-emblem{display:block;width:84px;height:66px;margin:0 auto 13px;filter:drop-shadow(0 5px 10px #100b09)}
+.node-scene>h3{font:700 clamp(22px,3vw,28px)/1.2 var(--serif);margin:0 0 7px}
+.node-scene>p,.node-message{color:var(--muted);margin:0 0 14px}
+.node-message{min-height:20px;margin:12px 0 0;font-size:13px}
+.node-screen .action{min-width:145px;font-size:18px;padding:10px 16px}
+.node-controls[hidden]{display:none}
+.node-controls{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin-top:20px}
+.node-screen #chestHand{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(8px,2vw,22px);margin:0 auto 10px;max-width:620px;overflow:visible}
+#chestHand .card{min-width:0;min-height:0}
+.shop-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;max-width:930px;margin:0 auto;padding:6px 4px}
+.shop-slot{min-width:0;display:flex;flex-direction:column;gap:10px}
+.shop-slot .card{flex:1 0 auto;min-width:0;min-height:0;padding:9px}
+.shop-slot .card h3{font-size:16px;margin:0}
+.shop-slot .bonus{display:none}
+.shop-slot .shop-buy{flex:none;width:100%;min-width:0;font:700 14px var(--serif);padding:8px 4px}
+.shop-slot.is-sold .card{opacity:.45}
+#shopRemoveDialog label{display:block;margin-bottom:5px}
+#shopRemoveSelect{width:100%;min-height:40px;border:1px solid var(--line);background:#191513;color:var(--cream);padding:6px 8px;font:inherit}
+@media(max-width:850px){.shop-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){
+ .node-screen{width:calc(100% - 24px);margin:12px auto 20px}
+ .node-table::before{top:86px}
+ .node-emblem{width:68px;height:54px}
+ #chestHand .card{padding:6px}
+ #chestHand .card h3{font-size:13px}
+ #chestHand :is(.effect,.choose){font-size:10px}
+ #chestHand .card-point{gap:4px;font-size:10px}
+ #chestHand .card-point strong{font-size:25px}
+ .shop-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+</style>
 </head>
 <body>
 <section id="mainMenu" aria-label="Main menu" role="region">
@@ -306,10 +346,46 @@ nav button[aria-pressed='false'] { color: var(--muted); }
 <header><h1>OVERDRAW</h1><nav aria-label="Game options"><button id="help">How to play</button><button id="menuReturn">Main menu</button><button id="restart">Restart</button><button id="export">Export log</button><button id="soundToggle" aria-pressed="true">SFX: On</button><button id="musicToggle" aria-pressed="true">Music: On</button></nav></header>
 <main class="route-screen" id="routeScreen" aria-labelledby="routeTitle" hidden>
   <h2 id="routeTitle">Route Map</h2>
-  <div class="route-meta"><strong id="routeHP"></strong><button id="routeDeck" class="deck-button" type="button"></button></div>
+  <div class="route-meta"><strong id="routeHP"></strong><strong id="routeCoins" class="coin-count"></strong><button id="routeDeck" class="deck-button" type="button"></button></div>
   <p id="routeMessage" role="status"></p>
   <div id="routeMap"><div id="routeBoard" class="route-board" role="group"></div></div>
   <div class="route-key"><span class="key-next" id="routeNext"></span><span class="key-visited" id="routeVisited"></span><span id="routeLocked"></span></div>
+</main>
+<main class="node-screen" id="nodeScreen" aria-labelledby="nodeTitle" hidden>
+  <div class="node-header">
+    <h2 id="nodeTitle"></h2>
+    <div class="node-meta">
+      <strong id="nodeHP"></strong>
+      <strong id="nodeCoins" class="coin-count"></strong>
+      <button class="deck-button" id="nodeDeck" type="button"></button>
+    </div>
+  </div>
+  <div class="node-table">
+    <svg class="node-emblem" viewBox="0 0 96 78" aria-hidden="true">
+      <path d="M48 2 94 75H2Z" fill="#793631" stroke="#b56853" stroke-width="2"/>
+      <circle cx="48" cy="47" r="12" fill="#dfc78d"/>
+      <path d="M48 38Q54 47 48 56Q42 47 48 38Z" fill="#2a1917"/>
+    </svg>
+    <section id="nodeChest" class="node-scene" aria-labelledby="chestTitle" hidden>
+      <h3 id="chestTitle"></h3>
+      <p id="chestCopy"></p>
+      <div id="chestHand" class="reward-hand"></div>
+      <button id="chestSkip" class="action" type="button"></button>
+    </section>
+    <section id="nodeShop" class="node-scene" aria-labelledby="shopTitle" hidden>
+      <h3 id="shopTitle"></h3>
+      <p id="shopCopy"></p>
+      <div id="shopStock" class="shop-grid"></div>
+      <div class="node-controls"><button id="shopRemove" class="action light" type="button"></button></div>
+    </section>
+    <section id="nodeRest" class="node-scene" aria-labelledby="restTitle" hidden>
+      <h3 id="restTitle"></h3>
+      <p id="restCopy" role="status"></p>
+      <button id="restHeal" class="action light" type="button"></button>
+    </section>
+    <p id="nodeMessage" class="node-message" role="status" hidden></p>
+    <div class="node-controls" id="nodeExit" hidden><button id="nodeContinue" class="action" type="button"></button></div>
+  </div>
 </main>
 <main class="shell" id="shell"><div class="scene" aria-hidden="true"></div><div class="enemy-portrait-window" aria-hidden="true"><div class="original-keeper" id="enemyArt" aria-hidden="true"></div></div><div class="scene table-foreground" aria-hidden="true"></div><div class="slash-effect" id="slashEffect" aria-hidden="true"></div>
 <section class="stage" aria-label="Combatants"><div class="health"><h2>You</h2><div class="hp"><span id="playerHP">40</span> <small>/ 40 HP</small></div><div class="bar" role="meter" aria-label="Your HP" aria-valuemin="0" aria-valuemax="40" id="playerMeter"><span id="playerBar"></span></div><div id="relic" class="relic" hidden>Quiet Counter · 3+ cards: +2 Block</div></div><div class="health enemy"><h2 id="enemyName">Gatekeeper</h2><div class="hp"><span id="enemyHP">24</span> <small id="enemyMax">/ 24 HP</small></div><div class="bar" role="meter" aria-label="Enemy HP" aria-valuemin="0" id="enemyMeter"><span id="enemyBar"></span></div><div class="intent"><span>Enemy intent</span><strong id="intent">Attack 5</strong></div></div><div class="turn-tag" id="turnTag">Encounter 1 · Turn 1</div></section>
@@ -323,8 +399,16 @@ nav button[aria-pressed='false'] { color: var(--muted); }
 <div class="footer-row"><button class="deck-button" id="piles">Draw 12 · Discard 0 · Deck 12</button><label class="music-control" for="musicVolume">Music volume <input id="musicVolume" type="range" min="0" max="50" value="18" step="1"><output id="musicLevel" for="musicVolume">18%</output></label><span class="session-label" id="sessionLabel">Repeatable opening · Offline playtest</span></div>
 </main>
 <div class="log-wrap"><details id="logDetails"><summary>Turn log <span id="logCount"></span></summary><div class="log-lines" id="logLines"></div></details></div>
-<dialog id="helpDialog"><button class="close" data-close>Close</button><h2>One more card could cost everything.</h2><p><b>Hit</b> draws one card. <b>Point</b> moves you toward the 21-point limit. <b>Damage</b> shows base damage, and <b>Effect</b> changes the output. They are separate numbers.</p><ol><li>Read the enemy's next attack and build your chain with Hit.</li><li>Stand at 21 or below to deal the displayed damage and gain Block. Effects use the completed chain. A defeated enemy cannot attack.</li><li>Above 21 is a Bust: pending damage and Block are lost and the enemy attacks immediately.</li><li>After the enemy acts, click Next Turn. Block expires and your chain moves to the discard pile. Empty draw piles reshuffle discards.</li><li>Choose Start on the route map to fight Gatekeeper. Then pick connected nodes toward the Boss. Fight, Elite and Card nodes offer one card or Skip. Rest heals 20% of missing HP, rounded up. Your HP and deck carry through the run.</li></ol><p><b>Enemies:</b> Elite fights use a stronger enemy and guarantee a 1–3 Point option. Defeating the Boss completes your run.<br><b>Quiet Counter:</b> after the opening Gatekeeper, Stand with 3+ cards for +2 Block.</p><p><b>Combat feedback:</b> Stand plays a sword slash. Taking HP damage adds an impact sound and a brief red screen edge. Fully blocked attacks use a lighter metallic sound. SFX: On / Off controls sound effects. Music: On / Off controls the background loop, with a Music volume slider below. Music starts after your first interaction. HIT draws a card from the left pile into your chain; STAND sends the chain toward the enemy before the attack resolves. The enemy gently breathes while alive; your system reduced-motion preference is respected.</p><p><b>Keys:</b> H = Hit, S = Stand, N = Next Turn. Click the draw pile to view your deck. On phones, swipe the card row.</p><p class="subnote">Restart offers a fresh shuffle or the same opening. Reload also restores the same opening. Export log downloads decisions from this browser; no data is sent anywhere. Logs are saved locally when browser storage is available.</p></dialog>
+<dialog id="helpDialog"><button class="close" data-close>Close</button><h2>One more card could cost everything.</h2><p><b>Hit</b> draws one card. <b>Point</b> moves you toward the 21-point limit. <b>Damage</b> shows base damage, and <b>Effect</b> changes the output. They are separate numbers.</p><ol><li>Read the enemy's next attack and build your chain with Hit.</li><li>Stand at 21 or below to deal the displayed damage and gain Block. Effects use the completed chain. A defeated enemy cannot attack.</li><li>Above 21 is a Bust: pending damage and Block are lost and the enemy attacks immediately.</li><li>After the enemy acts, click Next Turn. Block expires and your chain moves to the discard pile. Empty draw piles reshuffle discards.</li><li>Choose Start on the route map to fight Gatekeeper. Then pick connected nodes toward the Boss. Fight and Elite victories grant coins and a card choice. Chest offers a free card choice. Shop sells cards and can remove one for a fee. Rest heals 20% of missing HP, rounded up. Your HP, deck, and coins carry through the run.</li></ol><p><b>Enemies:</b> Elite fights use a stronger enemy and guarantee a 1–3 Point option. Defeating the Boss completes your run.<br><b>Quiet Counter:</b> after the opening Gatekeeper, Stand with 3+ cards for +2 Block.</p><p><b>Combat feedback:</b> Stand plays a sword slash. Taking HP damage adds an impact sound and a brief red screen edge. Fully blocked attacks use a lighter metallic sound. SFX: On / Off controls sound effects. Music: On / Off controls the background loop, with a Music volume slider below. Music starts after your first interaction. HIT draws a card from the left pile into your chain; STAND sends the chain toward the enemy before the attack resolves. The enemy gently breathes while alive; your system reduced-motion preference is respected.</p><p><b>Keys:</b> H = Hit, S = Stand, N = Next Turn. Click the draw pile to view your deck. On phones, swipe the card row.</p><p class="subnote">Restart offers a fresh shuffle or the same opening. Reload also restores the same opening. Export log downloads decisions from this browser; no data is sent anywhere. Logs are saved locally when browser storage is available.</p></dialog>
 <dialog id="deckDialog"><button class="close" data-close>Close</button><h2>Your deck</h2><p id="deckSummary"></p><table><thead><tr><th>Card</th><th>Qty</th><th>Point</th><th>Damage</th><th>Effect</th></tr></thead><tbody id="deckTable"></tbody></table><p class="subnote">Damage is base damage. Conditional bonuses are included in the pending damage display.</p></dialog>
+<dialog id="shopRemoveDialog" aria-labelledby="shopRemoveTitle">
+  <button class="close" data-close type="button">Close</button>
+  <h2 id="shopRemoveTitle"></h2>
+  <p id="shopRemoveCopy"></p>
+  <label id="shopRemoveLabel" for="shopRemoveSelect"></label>
+  <select id="shopRemoveSelect"></select>
+  <div class="dialog-actions"><button id="shopRemoveConfirm" class="action" type="button" disabled></button></div>
+</dialog>
 <dialog id="restartDialog"><button class="close" data-close>Close</button><h2>Start another run</h2><p>Choose a fresh shuffle for playtesting, or restore the repeatable opening. Your current run ends; its decisions stay in the exported log.</p><div class="dialog-actions"><button id="fresh" class="action">Fresh shuffle</button><button id="demo" class="action light">Repeatable opening</button></div></dialog>
 <dialog id="settingsDialog"><button class="close" data-close>Close</button><h2 id="settingsTitle">Settings</h2><div class="settings-grid"><div class="settings-row"><label id="languageLabel" for="languageSelect">Language</label><select id="languageSelect"><option value="en">English</option><option value="zh">中文</option></select></div><div class="settings-row"><span id="settingsSfxLabel">Sound Effects</span><button id="settingsSfxToggle" type="button">On</button></div><div class="settings-row"><span id="settingsMusicLabel">Music</span><button id="settingsMusicToggle" type="button">On</button></div><div class="settings-row"><label id="settingsVolumeLabel" for="settingsMusicVolume">Music Volume</label><input id="settingsMusicVolume" type="range" min="0" max="50" value="18" step="1"></div></div><p id="settingsSubnote" class="subnote">Settings update immediately and are saved in this browser.</p></dialog>
 <script>
@@ -347,23 +431,25 @@ const ENEMIES=[
  {name:'Elite Candle-Eye Slug',hp:38,attacks:[7,9,6],boss:false,art:'slug'}
 ];
 const MAX_HP=40;
+const REMOVE_PRICE=10;
+const NODE_PHASES=['chest','shop','rest'];
 // Rows run upward from Start. Each node lists the choices it opens on the next row.
 const ROUTE=[
  {type:'start',floor:0,x:50,next:[1,2],enemy:0},
  {type:'rest',floor:1,x:32,next:[3,4]},
  {type:'fight',floor:1,x:68,next:[4,5],enemy:1},
  {type:'fight',floor:2,x:20,next:[6,7],enemy:0},
- {type:'card',floor:2,x:50,next:[7,8]},
+ {type:'chest',floor:2,x:50,next:[7,8]},
  {type:'fight',floor:2,x:80,next:[8,9],enemy:0},
- {type:'card',floor:3,x:12.5,next:[10]},
+ {type:'chest',floor:3,x:12.5,next:[10]},
  {type:'fight',floor:3,x:37.5,next:[10,11],enemy:1},
  {type:'elite',floor:3,x:62.5,next:[11,12],enemy:3},
  {type:'rest',floor:3,x:87.5,next:[12]},
  {type:'fight',floor:4,x:20,next:[13],enemy:0},
  {type:'rest',floor:4,x:50,next:[13,14]},
- {type:'fight',floor:4,x:80,next:[14],enemy:1},
+ {type:'shop',floor:4,x:80,next:[14]},
  {type:'elite',floor:5,x:32,next:[15],enemy:3},
- {type:'card',floor:5,x:68,next:[15]},
+ {type:'chest',floor:5,x:68,next:[15]},
  {type:'boss',floor:6,x:50,next:[],enemy:2}
 ];
 function shuffle(items){const a=[...items];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
@@ -389,7 +475,7 @@ class Game{
   if(this.events?.length)this.archive.push({id:this.id,mode:this.mode,status:this.phase,events:this.events});
   this.id=Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7);this.mode=random?'fresh':'repeatable';this.events=[];
   this.deck=['precision','clean','heavy','last'].flatMap(k=>[k,k,k]);this.hp=MAX_HP;this.encounter=0;this.relic=false;this.turn=1;this.enemyHP=ENEMIES[0].hp;this.discard=[];this.chain=[];this.phase='map';this.lastResult=null;this.rewardChoices=[];
-  this.route=[];this.healed=null;
+  this.route=[];this.healed=null;this.coins=0;this.shopStock=[];this.shopRemoved=false;
   this.draw=random?shuffle(this.deck):['precision','heavy','clean','last','precision','clean','heavy','last','clean','precision','heavy','last'];
   this.displayedAttack=this.baseIntent();this.record('start',{mode:this.mode});
  }
@@ -404,16 +490,18 @@ class Game{
   this.healed=null;
   this.lastResult=null;
   this.rewardChoices=[];
-  if(node.type==='rest'){
-   this.healed=Math.ceil((MAX_HP-this.hp)*.2);
-   this.hp+=this.healed;
-   this.record('rest',{healed:this.healed});
-   return;
-  }
-  if(node.type==='card'){
-   this.phase='reward';
-   this.rewardChoices=rollRewardChoices();
-   this.record('card_node');
+  this.chain=[];
+  if(NODE_PHASES.includes(node.type)){
+   this.phase=node.type;
+   if(node.type==='chest')this.rewardChoices=rollRewardChoices();
+   if(node.type==='shop'){
+    const keys=Object.keys(CARDS);
+    const regular=shuffle(keys.filter(key=>CARDS[key].point>=4)).slice(0,3);
+    const low=shuffle(keys.filter(key=>CARDS[key].point<4)).slice(0,2);
+    this.shopStock=[...regular,...low].map(card=>({card,price:CARDS[card].point<4?8:5,sold:false}));
+    this.shopRemoved=false;
+   }
+   this.record('node_enter',{type:node.type});
    return;
   }
   this.encounter=node.enemy;
@@ -421,10 +509,42 @@ class Game{
   this.turn=1;
   if(id!==0)this.draw=shuffle(this.deck);
   this.discard=[];
-  this.chain=[];
   this.displayedAttack=this.baseIntent();
   this.phase='drawing';
   this.record(node.type==='boss'?'boss_start':'encounter_start');
+ }
+ restAmount(){return Math.ceil((MAX_HP-this.hp)*.2);}
+ heal(){
+  if(this.phase!=='rest'||this.healed!==null||this.restAmount()===0)return;
+  this.healed=this.restAmount();
+  this.hp+=this.healed;
+  this.record('rest',{healed:this.healed});
+ }
+ leaveNode(){
+  if(this.phase==='shop'||this.phase==='rest'&&(this.healed!==null||this.restAmount()===0)){
+   this.phase='map';
+  }
+ }
+ buyCard(card){
+  if(this.phase!=='shop')return;
+  const item=this.shopStock.find(entry=>entry.card===card);
+  if(!item||item.sold||this.coins<item.price)return;
+  this.coins-=item.price;
+  item.sold=true;
+  this.deck.push(card);
+  this.record('shop_buy',{card,price:item.price});
+ }
+ canRemoveCard(){
+  return this.phase==='shop'&&!this.shopRemoved&&this.coins>=REMOVE_PRICE&&this.deck.length>1;
+ }
+ removeCard(card){
+  if(!this.canRemoveCard())return;
+  const index=this.deck.indexOf(card);
+  if(index<0)return;
+  this.deck.splice(index,1);
+  this.coins-=REMOVE_PRICE;
+  this.shopRemoved=true;
+  this.record('shop_remove',{card,price:REMOVE_PRICE});
  }
  baseIntent(){const attacks=ENEMIES[this.encounter].attacks;return attacks[(this.turn-1)%attacks.length];}
  intent(){return this.displayedAttack;}
@@ -448,7 +568,7 @@ class Game{
  record(action,extra={}){
   const node=this.route.at(-1);
   const enemy=ROUTE[node]?.enemy;
-  this.events.push({time:new Date().toISOString(),node,encounter:ENEMIES[enemy]?.name??null,turn:this.turn,action,hp:this.hp,enemyHP:this.enemyHP,point:this.points(),chain:[...this.chain],intent:this.intent(),...extra});
+  this.events.push({time:new Date().toISOString(),node,encounter:ENEMIES[enemy]?.name??null,turn:this.turn,action,hp:this.hp,coins:this.coins,enemyHP:this.enemyHP,point:this.points(),chain:[...this.chain],intent:this.intent(),...extra});
  }
  hit(){if(this.phase!=='drawing')return;
   if(!this.draw.length&&this.discard.length){this.draw=shuffle(this.discard);this.discard=[];this.record('reshuffle');}
@@ -464,12 +584,14 @@ class Game{
 
   const type=ROUTE[this.route.at(-1)].type;
   this.phase=this.hp===0?'defeat':this.enemyHP>0?'resolved':type==='boss'?'victory':'reward';
+  const coinsEarned=this.phase==='reward'?(type==='elite'?10:5):0;
   if(this.phase==='reward')this.rewardChoices=rollRewardChoices(type==='elite');
-  this.record(bust?'bust':'stand',{...this.lastResult,status:this.phase});
+  this.coins+=coinsEarned;
+  this.record(bust?'bust':'stand',{...this.lastResult,coinsEarned,status:this.phase});
   if(this.phase==='victory')this.record('victory');
  }
  next(){if(this.phase!=='resolved')return;this.discard.push(...this.chain);this.chain=[];this.lastResult=null;this.turn++;this.displayedAttack=this.baseIntent();this.phase='drawing';this.record('next_turn');}
- reward(card){if(this.phase!=='reward'||(card!==null&&!this.rewardChoices.includes(card)))return;
+ reward(card){if(!['reward','chest'].includes(this.phase)||(card!==null&&!this.rewardChoices.includes(card)))return;
   const relicAcquired=this.route.at(-1)===0&&!this.relic;
   this.record(card?'reward':'skip',{card,relicAcquired});
   if(card)this.deck.push(card);
@@ -477,7 +599,7 @@ class Game{
   this.rewardChoices=[];
   this.phase='map';
  }
- export(){return {game:'OVERDRAW',version:'1.5-route-map',exportedAt:new Date().toISOString(),runs:[...this.archive,{id:this.id,mode:this.mode,status:this.phase,events:this.events}]};}
+ export(){return {game:'OVERDRAW',version:'1.6-node-scenes',exportedAt:new Date().toISOString(),runs:[...this.archive,{id:this.id,mode:this.mode,status:this.phase,events:this.events}]};}
 }
 
 const $=id=>document.getElementById(id),game=new Game();
@@ -569,6 +691,12 @@ function finishCombatFeedback() {
 }
 function focusGameControl() {
   if (game.phase === 'map') $('routeBoard').querySelector('.is-next')?.focus({preventScroll:true});
+  else if (game.phase === 'chest') $('chestHand').querySelector('button')?.focus({preventScroll:true});
+  else if (game.phase === 'rest') ($('restHeal').disabled?$('nodeContinue'):$('restHeal')).focus({preventScroll:true});
+  else if (game.phase === 'shop') {
+    const control=$('shopStock').querySelector('button:not(:disabled)')||($('shopRemove').disabled?$('nodeContinue'):$('shopRemove'));
+    control.focus({preventScroll:true});
+  }
   else if (game.phase === 'resolved') $('next').focus({preventScroll: true});
   else if (game.phase === 'drawing') $('hit').focus({preventScroll: true});
   else if (game.phase === 'reward') $('rewardHand').querySelector('button').focus({preventScroll: true});
@@ -787,7 +915,7 @@ const MONSTER_ART={"slug":"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABVAAAAS
 
 function persist(){try{localStorage.setItem(STORAGE,JSON.stringify(game.export().runs.slice(-50)));}catch{}}
 function cardHTML(key,index,reward=false){const c=CARDS[key],bonus=game.output().bonuses[index]||0;const name=cardName(key),effect=cardEffect(key);return `<${reward?'button':'article'} class="card ${reward?'reward-card':''} ${game.lastResult?.bust&&!reward?'burned':''}" ${reward?`data-reward="${key}" aria-label="${currentLanguage==='zh'?'选择':'Choose'} ${name}"`:''}><div class="card-heading"><h3>${name}</h3></div><img class="card-art" src="${CARD_ART[key]}" alt="" style="--art-scale:${(.6+.05*c.point).toFixed(2)}"><div class="card-point"><strong>${c.point}</strong> ${currentLanguage==='zh'?'点数':'POINT'}</div><div class="card-value"><b>${c.value}</b> ${currentLanguage==='zh'?'伤害值':'DAMAGE'}</div><p class="effect">${effect}</p>${reward?`<div class="choose">${currentLanguage==='zh'?'选择卡牌':'CHOOSE CARD'}</div>`:`<div class="bonus">${game.lastResult?.bust?(currentLanguage==='zh'?'爆牌失效':'LOST TO BUST'):bonus?`+${bonus} ${currentLanguage==='zh'?'额外伤害生效':'bonus damage active'}`:''}</div>`}</${reward?'button':'article'}>`;}
-const ROUTE_MARKS={start:'◆',fight:'⚔',card:'♠',rest:'✦',elite:'✶',boss:'♛'};
+const ROUTE_MARKS={start:'◆',fight:'⚔',chest:'♠',shop:'¤',rest:'✦',elite:'✶',boss:'♛'};
 function renderRoute(){
  const board=$('routeBoard'), victory=game.phase==='victory';
  const container=$(victory?'endRoute':'routeMap');
@@ -809,22 +937,66 @@ function renderRoute(){
  if(victory)return;
  $('routeTitle').textContent=t('routeTitle');
  $('routeHP').textContent=`${game.hp} / ${MAX_HP} HP`;
+ $('routeCoins').textContent=t('coinCount',{n:game.coins});
  $('routeDeck').textContent=t('routeDeck',{n:game.deck.length});
  $('routeMessage').textContent=game.healed!==null?t(game.healed?'restHealed':'restFull',{n:game.healed}):t(game.route.length?'routeChoose':'routeStart');
  $('routeNext').textContent=t('routeAvailable');
  $('routeVisited').textContent=t('routeTraveled');
  $('routeLocked').textContent=t('routeLocked');
 }
+function renderNodeScreen(){
+ const phase=game.phase;
+ $('nodeTitle').textContent=t('node_'+phase);
+ $('nodeHP').textContent=`${game.hp} / ${MAX_HP} HP`;
+ $('nodeCoins').textContent=t('coinCount',{n:game.coins});
+ $('nodeDeck').textContent=t('routeDeck',{n:game.deck.length});
+ $('nodeChest').hidden=phase!=='chest';
+ $('nodeShop').hidden=phase!=='shop';
+ $('nodeRest').hidden=phase!=='rest';
+ $('nodeExit').hidden=phase==='chest';
+ $('nodeContinue').textContent=t('nodeContinue');
+ $('nodeContinue').disabled=phase==='rest'&&game.healed===null&&game.restAmount()>0;
+ $('nodeMessage').hidden=true;
+
+ if(phase==='chest'){
+  $('chestTitle').textContent=t('chestTitle');
+  $('chestCopy').textContent=t('chestCopy');
+  $('chestHand').innerHTML=game.rewardChoices.map(key=>cardHTML(key,0,true)).join('');
+  $('chestSkip').textContent=t('skipReward');
+ }else if(phase==='rest'){
+  const amount=game.restAmount(), used=game.healed!==null;
+  $('restTitle').textContent=t('restTitle');
+  $('restCopy').textContent=used?t('restHealed',{n:game.healed}):amount?t('restOffer',{n:amount}):t('restFullHP');
+  $('restHeal').textContent=t('restHeal');
+  $('restHeal').disabled=used||amount===0;
+ }else{
+  $('shopTitle').textContent=t('shopTitle');
+  $('shopCopy').textContent=t('shopCopy');
+  $('shopStock').innerHTML=game.shopStock.map(item=>{
+   const {card,price,sold}=item;
+   const cost=t('buyPrice',{n:price});
+   return `<div class="shop-slot ${sold?'is-sold':''}">${cardHTML(card,-1)}<button type="button" class="action light shop-buy" data-buy="${card}" ${sold||game.coins<price?'disabled':''} aria-label="${sold?t('soldOut'):t('buyCard',{card:cardName(card),n:price})}">${sold?t('soldOut'):cost}</button></div>`;
+  }).join('');
+  $('shopRemove').textContent=game.shopRemoved?t('removeUsed'):t('removePrice',{n:REMOVE_PRICE});
+  $('shopRemove').disabled=!game.canRemoveCard();
+  const last=game.events.at(-1);
+  if(last.action==='shop_buy'||last.action==='shop_remove'){
+   $('nodeMessage').textContent=t(last.action==='shop_buy'?'shopBought':'shopRemoved',{card:cardName(last.card),n:last.price});
+   $('nodeMessage').hidden=false;
+  }
+ }
+}
 function render(){
  const enemy=ENEMIES[game.encounter],out=game.output();
  const isMap=game.phase==='map',isDraw=game.phase==='drawing',isReward=game.phase==='reward';
  const isEnd=['victory','defeat'].includes(game.phase);
- const isCard=isReward&&ROUTE[game.route.at(-1)]?.type==='card';
+ const isNode=NODE_PHASES.includes(game.phase);
  $('routeScreen').hidden=!isMap;
- $('shell').hidden=isMap;
- $('shell').classList.toggle('route-only',isCard||game.phase==='victory');
+ $('nodeScreen').hidden=!isNode;
+ $('shell').hidden=isMap||isNode;
+ $('shell').classList.toggle('route-only',game.phase==='victory');
  $('shell').classList.toggle('enemy-fallen',game.enemyHP===0||game.phase==='defeat');
- $('logDetails').parentElement.hidden=isMap;
+ $('logDetails').parentElement.hidden=isMap||isNode;
  $('playerHP').textContent=game.hp;
  $('enemyHP').textContent=game.enemyHP;
  $('enemyMax').textContent=`/ ${enemy.hp} HP`;
@@ -862,7 +1034,7 @@ function render(){
   $('skip').disabled=false;
   $('playAgain').disabled=false;
  }
- const events=game.events.filter(e=>!['start','encounter_start','boss_start','card_node'].includes(e.action));
+ const events=game.events.filter(e=>!['start','encounter_start','boss_start','card_node','node_enter'].includes(e.action));
  $('logCount').textContent=`(${events.length})`;
  $('logLines').innerHTML=events.slice().reverse().map(e=>`<div class="log-line"><span>Turn ${e.turn}</span><div>${eventText(e)}</div></div>`).join('');
  renderCardPiles();
@@ -872,7 +1044,8 @@ function eventText(e){
  if(e.action==='rest')return t(e.healed?'restHealed':'restFull',{n:e.healed});
  if(e.action==='hit')return `Drew ${CARDS[e.card].name} · ${e.point} Point`;
  if(['stand','bust'].includes(e.action))return `${e.action.toUpperCase()} · ${e.point} Point · ${e.damage} damage · ${e.block} Block · Lost ${e.taken} HP`;
- const source=e.encounter||t('node_card');
+ if(e.action==='shop_buy'||e.action==='shop_remove')return t(e.action==='shop_buy'?'shopBought':'shopRemoved',{card:cardName(e.card),n:e.price});
+ const source=e.encounter||t('node_chest');
  const relic=e.relicAcquired?' Quiet Counter acquired.':'';
  if(e.action==='reward')return `${source}: added ${CARDS[e.card].name}.${relic}`;
  if(e.action==='skip')return `${source}: skipped reward.${relic}`;
@@ -920,6 +1093,34 @@ $('routeBoard').onclick=e=>{
  const button=e.target.closest('[data-node]');
  if(button&&!button.disabled)act('selectNode',Number(button.dataset.node));
 };
+$('chestHand').onclick=e=>{
+ const card=e.target.closest('[data-reward]');
+ if(card)act('reward',card.dataset.reward);
+};
+$('chestSkip').onclick=()=>act('reward',null);
+$('restHeal').onclick=()=>act('heal');
+$('nodeContinue').onclick=()=>act('leaveNode');
+$('shopStock').onclick=e=>{
+ const buy=e.target.closest('[data-buy]');
+ if(buy&&!buy.disabled)act('buyCard',buy.dataset.buy);
+};
+$('shopRemove').onclick=()=>{
+ if(!game.canRemoveCard())return;
+ const select=$('shopRemoveSelect');
+ const quantities=new Map();
+ for(const key of game.deck)quantities.set(key,(quantities.get(key)||0)+1);
+ select.replaceChildren(new Option(t('removePlaceholder'),''));
+ for(const [key,qty] of quantities)select.add(new Option(`${cardName(key)} ×${qty}`,key));
+ $('shopRemoveConfirm').disabled=true;
+ $('shopRemoveDialog').showModal();
+};
+$('shopRemoveSelect').onchange=()=>{$('shopRemoveConfirm').disabled=!$('shopRemoveSelect').value;};
+$('shopRemoveConfirm').onclick=()=>{
+ const card=$('shopRemoveSelect').value;
+ if(!card)return;
+ $('shopRemoveDialog').close();
+ act('removeCard',card);
+};
 // Opening the menu pauses navigation without changing the active Game instance.
 // Only starting a NEW game resets the run.
 let hasStartedRun = false;
@@ -949,12 +1150,12 @@ $('menuSettings').onclick=()=>{syncSettingsUI(); $('settingsDialog').showModal()
 $('menuHowTo').onclick=()=>$('helpDialog').showModal();
 $('menuReturn').onclick=showMainMenu;
 $('endMenu').onclick=showMainMenu;
-$('help').onclick=()=>$('helpDialog').showModal();function showDeck(){const quantities=game.deck.reduce((a,k)=>(a[k]=(a[k]||0)+1,a),{});$('deckSummary').textContent=currentLanguage==='zh'?`共 ${game.deck.length} 张牌 · 抽牌堆 ${game.draw.length} 张 · 弃牌堆 ${game.discard.length} 张 · 连锁 ${game.chain.length} 张`:`${game.deck.length} cards total · ${game.draw.length} in draw pile · ${game.discard.length} discarded · ${game.chain.length} in chain`;$('deckTable').innerHTML=Object.entries(quantities).map(([k,n])=>`<tr><td><img class="deck-thumb" src="${CARD_ART[k]}" alt="">${cardName(k)}</td><td>${n}</td><td>${CARDS[k].point}</td><td>${CARDS[k].value}</td><td>${cardEffect(k)}</td></tr>`).join('');$('deckDialog').showModal();}$('piles').onclick=showDeck;$('drawPile').onclick=showDeck;$('routeDeck').onclick=showDeck;$('restart').onclick=()=>$('restartDialog').showModal();$('playAgain').onclick=()=>act('restart',true);$('fresh').onclick=()=>{$('restartDialog').close();act('restart',true);};$('demo').onclick=()=>{$('restartDialog').close();act('restart',false);};document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('dialog').close());
+$('help').onclick=()=>$('helpDialog').showModal();function showDeck(){const quantities=game.deck.reduce((a,k)=>(a[k]=(a[k]||0)+1,a),{});$('deckSummary').textContent=currentLanguage==='zh'?`共 ${game.deck.length} 张牌 · 抽牌堆 ${game.draw.length} 张 · 弃牌堆 ${game.discard.length} 张 · 连锁 ${game.chain.length} 张`:`${game.deck.length} cards total · ${game.draw.length} in draw pile · ${game.discard.length} discarded · ${game.chain.length} in chain`;$('deckTable').innerHTML=Object.entries(quantities).map(([k,n])=>`<tr><td><img class="deck-thumb" src="${CARD_ART[k]}" alt="">${cardName(k)}</td><td>${n}</td><td>${CARDS[k].point}</td><td>${CARDS[k].value}</td><td>${cardEffect(k)}</td></tr>`).join('');$('deckDialog').showModal();}$('piles').onclick=showDeck;$('drawPile').onclick=showDeck;$('routeDeck').onclick=showDeck;$('nodeDeck').onclick=showDeck;$('restart').onclick=()=>$('restartDialog').showModal();$('playAgain').onclick=()=>act('restart',true);$('fresh').onclick=()=>{$('restartDialog').close();act('restart',true);};$('demo').onclick=()=>{$('restartDialog').close();act('restart',false);};document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('dialog').close());
 $('export').onclick=()=>{const payload=game.export(),url=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download=`OVERDRAW-playtest-${game.id}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);$(game.phase==='map'?'routeMessage':game.phase==='victory'?'hint':'status').textContent=`Exported ${payload.runs.length} run log${payload.runs.length===1?'':'s'}. No data was uploaded.`;};
 document.addEventListener('keydown',e=>{if(e.repeat||e.ctrlKey||e.metaKey||e.altKey||!$('mainMenu').hidden||document.querySelector('dialog[open]')||['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName))return;const key=e.key.toLowerCase();if(key==='h'&&game.phase==='drawing'){e.preventDefault();act('hit');}if(key==='s'&&game.phase==='drawing'){e.preventDefault();act('stand');}if(key==='n'&&game.phase==='resolved'){e.preventDefault();act('next');}});
 
-const HELP_EN = "<button class=\"close\" data-close>Close</button><h2>One more card could cost everything.</h2><p><b>Hit</b> draws one card. <b>Point</b> moves you toward the 21-point limit. <b>Damage</b> shows base damage, and <b>Effect</b> changes the output. They are separate numbers.</p><ol><li>Read the enemy's next attack and build your chain with Hit.</li><li>Stand at 21 or below to deal the displayed damage and gain Block. Effects use the completed chain. A defeated enemy cannot attack.</li><li>Above 21 is a Bust: pending damage and Block are lost and the enemy attacks immediately.</li><li>After the enemy acts, click Next Turn. Block expires and your chain moves to the discard pile. Empty draw piles reshuffle discards.</li><li>Choose Start on the route map to fight Gatekeeper. Then pick connected nodes toward the Boss. Fight, Elite and Card nodes offer one card or Skip. Rest heals 20% of missing HP, rounded up. Your HP and deck carry through the run.</li></ol><p><b>Enemies:</b> Elite fights use a stronger enemy and guarantee a 1–3 Point option. Defeating the Boss completes your run.<br><b>Quiet Counter:</b> after the opening Gatekeeper, Stand with 3+ cards for +2 Block.</p><p><b>Combat feedback:</b> Stand plays a sword slash. Taking HP damage adds an impact sound and a brief red screen edge. Fully blocked attacks use a lighter metallic sound. SFX: On / Off controls sound effects. Music: On / Off controls the background loop, with a Music volume slider below. Music starts after your first interaction. HIT draws a card from the left pile into your chain; STAND sends the chain toward the enemy before the attack resolves. The enemy gently breathes while alive; your system reduced-motion preference is respected.</p><p><b>Keys:</b> H = Hit, S = Stand, N = Next Turn. Click the draw pile to view your deck. On phones, swipe the card row.</p><p class=\"subnote\">Restart offers a fresh shuffle or the same opening. Reload also restores the same opening. Export log downloads decisions from this browser; no data is sent anywhere. Logs are saved locally when browser storage is available.</p>";
-const HELP_ZH = "<button class=\"close\" data-close>关闭</button><h2>再多抽一张牌，可能就会失去一切。</h2><p><b>抽牌（Hit）</b>：抽取一张卡牌。<b>点数（Point）</b>：累计点数，目标是不超过 21。<b>伤害值（Damage）</b>：增加伤害；<b>效果（Effect）</b>：改变结算结果。这三个数值彼此不同。</p><ol><li>先查看敌人下一次攻击值，再点击“抽牌”建立卡牌连锁。</li><li>总点数不超过 21 时点击“停牌”，即可结算显示的伤害并获得格挡。效果会根据整组卡牌结算。被击败的敌人不会反击。</li><li>超过 21 点就会爆牌：本回合待造成伤害和格挡全部失效，敌人立即攻击。</li><li>敌人行动后点击“下一回合”。格挡会清空，连锁卡牌进入弃牌堆；抽牌堆空时会把弃牌洗回。</li><li>依次在地图上选择起点，迎战守门者。之后沿连线选择下一站，向首领前进。战斗、精英和卡牌节点可选一张牌或跳过。休息回复 20% 的缺失生命值，向上取整。生命值和牌组会延续整局。</li></ol><p><b>敌人：</b>精英战的敌人更强，奖励中至少有一张 1–3 点的牌。击败首领后结算本局。</p><p><b>静默计数（Quiet Counter）：</b>击败开场的守门者后获得。每次打出 3 张或更多卡牌并停牌时，额外获得 2 点格挡。</p><p><b>战斗反馈：</b>停牌时有刀剑挥砍音效；生命值受损时有受击音效及短暂的红色边缘提示；完全格挡时有较轻的金属音。可以在设置中开关音效、音乐并调整音乐音量。音乐会在首次交互后开始播放。抽牌时卡牌会进入你的连锁；停牌时卡牌会飞向敌人并结算。敌人存活时有轻微呼吸动画；系统的减少动态效果偏好也会得到尊重。</p><p><b>快捷键：</b>H = 抽牌，S = 停牌，N = 下一回合。点击左侧抽牌堆可以查看所有卡牌；在手机上可以左右滑动卡牌行。</p><p class=\"subnote\">可以从“重新开始”选择随机洗牌或固定开局。重新载入页面时，默认也是固定开局。“导出记录”只会把决策日志下载到你的设备，不会向外发送数据。浏览器允许本地存储时也会保存记录。</p>";
+const HELP_EN = "<button class=\"close\" data-close>Close</button><h2>One more card could cost everything.</h2><p><b>Hit</b> draws one card. <b>Point</b> moves you toward the 21-point limit. <b>Damage</b> shows base damage, and <b>Effect</b> changes the output. They are separate numbers.</p><ol><li>Read the enemy's next attack and build your chain with Hit.</li><li>Stand at 21 or below to deal the displayed damage and gain Block. Effects use the completed chain. A defeated enemy cannot attack.</li><li>Above 21 is a Bust: pending damage and Block are lost and the enemy attacks immediately.</li><li>After the enemy acts, click Next Turn. Block expires and your chain moves to the discard pile. Empty draw piles reshuffle discards.</li><li>Choose Start on the route map to fight Gatekeeper. Then pick connected nodes toward the Boss. Fight and Elite victories grant coins and a card choice. Chest offers a free card choice. Shop sells cards and can remove one for a fee. Rest heals 20% of missing HP, rounded up. Your HP, deck, and coins carry through the run.</li></ol><p><b>Enemies:</b> Elite fights use a stronger enemy and guarantee a 1–3 Point option. Defeating the Boss completes your run.<br><b>Quiet Counter:</b> after the opening Gatekeeper, Stand with 3+ cards for +2 Block.</p><p><b>Combat feedback:</b> Stand plays a sword slash. Taking HP damage adds an impact sound and a brief red screen edge. Fully blocked attacks use a lighter metallic sound. SFX: On / Off controls sound effects. Music: On / Off controls the background loop, with a Music volume slider below. Music starts after your first interaction. HIT draws a card from the left pile into your chain; STAND sends the chain toward the enemy before the attack resolves. The enemy gently breathes while alive; your system reduced-motion preference is respected.</p><p><b>Keys:</b> H = Hit, S = Stand, N = Next Turn. Click the draw pile to view your deck. On phones, swipe the card row.</p><p class=\"subnote\">Restart offers a fresh shuffle or the same opening. Reload also restores the same opening. Export log downloads decisions from this browser; no data is sent anywhere. Logs are saved locally when browser storage is available.</p>";
+const HELP_ZH = "<button class=\"close\" data-close>关闭</button><h2>再多抽一张牌，可能就会失去一切。</h2><p><b>抽牌（Hit）</b>：抽取一张卡牌。<b>点数（Point）</b>：累计点数，目标是不超过 21。<b>伤害值（Damage）</b>：增加伤害；<b>效果（Effect）</b>：改变结算结果。这三个数值彼此不同。</p><ol><li>先查看敌人下一次攻击值，再点击“抽牌”建立卡牌连锁。</li><li>总点数不超过 21 时点击“停牌”，即可结算显示的伤害并获得格挡。效果会根据整组卡牌结算。被击败的敌人不会反击。</li><li>超过 21 点就会爆牌：本回合待造成伤害和格挡全部失效，敌人立即攻击。</li><li>敌人行动后点击“下一回合”。格挡会清空，连锁卡牌进入弃牌堆；抽牌堆空时会把弃牌洗回。</li><li>依次在地图上选择起点，迎战守门者。之后沿连线选择下一站，向首领前进。打赢战斗和精英可获得金币并选牌。宝箱可免费选牌。商店可以买牌或付费移除一张。休息回复 20% 的缺失生命值，向上取整。生命值、牌组和金币会延续整局。</li></ol><p><b>敌人：</b>精英战的敌人更强，奖励中至少有一张 1–3 点的牌。击败首领后结算本局。</p><p><b>静默计数（Quiet Counter）：</b>击败开场的守门者后获得。每次打出 3 张或更多卡牌并停牌时，额外获得 2 点格挡。</p><p><b>战斗反馈：</b>停牌时有刀剑挥砍音效；生命值受损时有受击音效及短暂的红色边缘提示；完全格挡时有较轻的金属音。可以在设置中开关音效、音乐并调整音乐音量。音乐会在首次交互后开始播放。抽牌时卡牌会进入你的连锁；停牌时卡牌会飞向敌人并结算。敌人存活时有轻微呼吸动画；系统的减少动态效果偏好也会得到尊重。</p><p><b>快捷键：</b>H = 抽牌，S = 停牌，N = 下一回合。点击左侧抽牌堆可以查看所有卡牌；在手机上可以左右滑动卡牌行。</p><p class=\"subnote\">可以从“重新开始”选择随机洗牌或固定开局。重新载入页面时，默认也是固定开局。“导出记录”只会把决策日志下载到你的设备，不会向外发送数据。浏览器允许本地存储时也会保存记录。</p>";
 const langStorage = 'overdraw-language';
 let currentLanguage = 'en';
 try {
@@ -975,8 +1176,18 @@ const UI_TEXT = {
     eliteSlug:'Elite Candle-Eye Slug',
     routeTitle:'Route Map', routeStart:'Select Start to face the opening fight.', routeChoose:'Choose a highlighted node to continue.',
     routeDeck:'View deck · {n} cards', routeFloor:'Row {n}', routeAvailable:'Available', routeTraveled:'Visited', routeLocked:'Locked',
-    node_start:'Start', node_fight:'Fight', node_card:'Card', node_rest:'Rest', node_elite:'Elite', node_boss:'Boss',
+    node_start:'Start', node_fight:'Fight', node_chest:'Chest', node_shop:'Shop', node_rest:'Rest', node_elite:'Elite', node_boss:'Boss',
     restHealed:'Rest restored {n} HP.', restFull:'You rested at full HP.',
+    coinCount:'{n} coins', coinsEarned:'Earned {n} coins.', nodeContinue:'Continue',
+    chestTitle:'Choose a card', chestCopy:'Add one of these cards to your deck, or skip.',
+    restTitle:'Rest at the table', restOffer:'Heal {n} HP. Rest restores 20% of missing health, rounded up.',
+    restFullHP:'Your health is full. You can continue.', restHeal:'Heal',
+    shopTitle:'Cards for sale', shopCopy:'Buy cards for your deck or pay to remove one.',
+    buyPrice:'Buy · {n} coins', buyCard:'Buy {card} for {n} coins', soldOut:'Sold out',
+    removeTitle:'Remove a Card', removePrice:'Remove a Card · {n} coins', removeUsed:'Card removal used',
+    removeCopy:'Remove one copy from your deck for {n} coins.', removeLabel:'Card to remove',
+    removePlaceholder:'Choose a card', removeConfirm:'Confirm removal',
+    shopBought:'Bought {card} for {n} coins.', shopRemoved:'Removed {card} for {n} coins.',
     point:'Point', pendingDamage:'Pending damage', damageDealt:'Damage dealt', pendingBlock:'Pending Block', blockUsed:'Block used',
     drawPile:'Draw pile', discard:'Discard',
     rewardChoose:'Choose your next advantage.',
@@ -1013,8 +1224,18 @@ const UI_TEXT = {
     eliteSlug:'精英烛眼蛞蝓',
     routeTitle:'路线地图', routeStart:'选择起点，进入开场战斗。', routeChoose:'选择高亮的节点继续前进。',
     routeDeck:'查看牌组 · {n} 张', routeFloor:'第 {n} 层', routeAvailable:'可前往', routeTraveled:'已走过', routeLocked:'未解锁',
-    node_start:'起点', node_fight:'战斗', node_card:'卡牌', node_rest:'休息', node_elite:'精英', node_boss:'首领',
+    node_start:'起点', node_fight:'战斗', node_chest:'宝箱', node_shop:'商店', node_rest:'休息', node_elite:'精英', node_boss:'首领',
     restHealed:'休息回复了 {n} HP。', restFull:'休息时生命值已满。',
+    coinCount:'{n} 金币', coinsEarned:'获得 {n} 金币。', nodeContinue:'继续',
+    chestTitle:'选择一张牌', chestCopy:'选一张牌加入牌组，或跳过。',
+    restTitle:'在牌桌旁休息', restOffer:'可以回复 {n} HP。休息回复 20% 的缺失生命值，向上取整。',
+    restFullHP:'生命值已满，可以继续。', restHeal:'回血',
+    shopTitle:'在售卡牌', shopCopy:'购买卡牌加入牌组，或付费移除一张。',
+    buyPrice:'购买 · {n} 金币', buyCard:'花 {n} 金币购买{card}', soldOut:'已售罄',
+    removeTitle:'移除一张牌', removePrice:'移除一张牌 · {n} 金币', removeUsed:'已使用移除服务',
+    removeCopy:'花 {n} 金币从牌组移除一张卡牌。', removeLabel:'要移除的牌',
+    removePlaceholder:'选择一张牌', removeConfirm:'确认移除',
+    shopBought:'花 {n} 金币购买了{card}。', shopRemoved:'花 {n} 金币移除了{card}。',
     point:'点数', pendingDamage:'待造成伤害', damageDealt:'已造成伤害', pendingBlock:'待获得格挡', blockUsed:'已使用格挡',
     drawPile:'抽牌堆', discard:'弃牌堆',
     rewardChoose:'选择你的下一项优势。',
@@ -1054,6 +1275,7 @@ const CARD_ZH = {
 function cardName(k){return currentLanguage==='zh'?(CARD_ZH[k]?.[0]||CARDS[k].name):CARDS[k].name;}
 function cardEffect(k){return currentLanguage==='zh'?(CARD_ZH[k]?.[1]||CARDS[k].effect):CARDS[k].effect;}
 function eventTextZh(e){
+  if(e.action==='shop_buy'||e.action==='shop_remove')return t(e.action==='shop_buy'?'shopBought':'shopRemoved',{card:cardName(e.card),n:e.price});
   if(e.action==='rest')return t(e.healed?'restHealed':'restFull',{n:e.healed});
   if(e.action==='hit')return `抽到 ${cardName(e.card)} · ${e.point} 点`;
   if(['stand','bust'].includes(e.action))return `${e.action==='bust'?'爆牌':'停牌'} · ${e.point} 点 · ${e.damage} 伤害 · ${e.block} 格挡 · 失去 ${e.taken} HP`;
@@ -1120,6 +1342,11 @@ function applyLanguageToUI(){
   $('helpDialog').querySelector('[data-close]').textContent = t('close');
   $('deckDialog').querySelector('[data-close]').textContent = t('close');
   $('settingsDialog').querySelector('[data-close]').textContent = t('close');
+  $('shopRemoveDialog').querySelector('[data-close]').textContent=t('close');
+  $('shopRemoveTitle').textContent=t('removeTitle');
+  $('shopRemoveCopy').textContent=t('removeCopy',{n:REMOVE_PRICE});
+  $('shopRemoveLabel').textContent=t('removeLabel');
+  $('shopRemoveConfirm').textContent=t('removeConfirm');
   $('restartDialog').querySelector('h2').textContent = t('startAnotherRun');
   $('restartDialog').querySelector('p').textContent = t('restartCopy');
   $('fresh').textContent = t('freshShuffle');
@@ -1130,7 +1357,7 @@ function applyLanguageToUI(){
   $('deckDialog').querySelector('thead').innerHTML=currentLanguage==='zh'?'<tr><th>卡牌</th><th>数量</th><th>点数</th><th>伤害值</th><th>效果</th></tr>':'<tr><th>Card</th><th>Qty</th><th>Point</th><th>Damage</th><th>Effect</th></tr>';
   $('deckDialog').querySelector('.subnote').textContent=currentLanguage==='zh'?'伤害值指基础伤害。待造成伤害会包含符合条件的额外加成。':'Damage is base damage. Conditional bonuses are included in the pending damage display.';
   if($('deckDialog').open) showDeck();
-  $('hand').innerHTML=game.chain.length?game.chain.map((k,i)=>cardHTML(k,i)).join(''):`<div class="empty-hand"><div class="seal" aria-hidden="true">XXI</div><p>${currentLanguage==='zh'?'下一份献祭正在等待。':'Your next offering awaits.'}</p><small>${currentLanguage==='zh'?'抽取一张卡牌，开始连锁。':'Draw a card to begin your chain.'}</small></div>`;
+  if(!$('shell').hidden)$('hand').innerHTML=game.chain.length?game.chain.map((k,i)=>cardHTML(k,i)).join(''):`<div class="empty-hand"><div class="seal" aria-hidden="true">XXI</div><p>${currentLanguage==='zh'?'下一份献祭正在等待。':'Your next offering awaits.'}</p><small>${currentLanguage==='zh'?'抽取一张卡牌，开始连锁。':'Draw a card to begin your chain.'}</small></div>`;
   if(game.phase==='reward')$('rewardHand').innerHTML=game.rewardChoices.map(k=>cardHTML(k,0,true)).join('');
 
   $('deckCaption').textContent = currentLanguage==='zh'?'查看牌组':'View deck';
@@ -1145,6 +1372,7 @@ function applyLanguageToUI(){
   $('playerHP').closest('.health').querySelector('h2').textContent=currentLanguage==='zh'?'玩家':'You';
   $('piles').textContent = t('drawDiscardDeck', {draw:game.draw.length, discard:game.discard.length, deck:game.deck.length});
   if(game.phase==='map'||game.phase==='victory')renderRoute();
+  if(NODE_PHASES.includes(game.phase))renderNodeScreen();
   const enemy = ENEMIES[game.encounter];
   $('enemyName').textContent = enemyNameFor(game.encounter) + (enemy.boss ? ' · ' + t('boss') : '');
   $('intent').textContent = game.enemyHP===0 ? t('defeated') : t('attack',{n:game.intent()});
@@ -1158,7 +1386,8 @@ function applyLanguageToUI(){
   }
   if (game.phase === 'reward') {
     $('rewardTitle').textContent=t('rewardChoose');
-    $('rewardCopy').textContent=t('rewardCopy')+(game.route.at(-1)===0?t('rewardRelic'):'');
+    const earned=game.events.at(-1).coinsEarned;
+    $('rewardCopy').textContent=t('rewardCopy')+(earned?' '+t('coinsEarned',{n:earned}):'')+(game.route.at(-1)===0?t('rewardRelic'):'');
     $('skip').textContent=t('skipReward');
   }
   if (['victory','defeat'].includes(game.phase)) {
@@ -1170,7 +1399,7 @@ function applyLanguageToUI(){
     $('endNumbers').innerHTML = `<span>${t('hpRemaining',{n:game.hp})}</span><span>${t('stands',{n:stands})}</span><span>${t('busts',{n:busts})}</span>`;
   }
   if(currentLanguage==='zh'){
-    const events=game.events.filter(e=>!['start','encounter_start','boss_start','card_node'].includes(e.action));
+    const events=game.events.filter(e=>!['start','encounter_start','boss_start','card_node','node_enter'].includes(e.action));
     $('logLines').innerHTML=events.slice().reverse().map(e=>`<div class="log-line"><span>第 ${e.turn} 回合</span><div>${eventTextZh(e)}</div></div>`).join('');
   }
   $('hint').textContent = game.phase==='reward' ? t('hintReward') : (['victory','defeat'].includes(game.phase) ? t('hintEnd') : (game.phase==='resolved' ? t('hintResolved') : t('hintNormal')));

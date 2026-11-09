@@ -28,7 +28,9 @@ function reach(game, nodes) {
   for (const node of nodes) {
     game.selectNode(node);
     if (game.phase === 'drawing') defeatEnemy(game);
-    if (game.phase === 'reward') game.reward(null);
+    if (['reward', 'chest'].includes(game.phase)) game.reward(null);
+    if (game.phase === 'rest') game.heal();
+    if (['rest', 'shop'].includes(game.phase)) game.leaveNode();
   }
 }
 
@@ -75,8 +77,18 @@ test('Rest restores 20% of missing HP rounded up and cannot be repeated', () => 
     openRoute(game);
     game.hp = before;
     game.selectNode(1);
+    assert.equal(game.phase, 'rest');
+    assert.equal(game.hp, before);
+    assert.equal(game.restAmount(), after - before);
+    if (before < 40) {
+      game.leaveNode();
+      assert.equal(game.phase, 'rest');
+    }
+    game.heal();
+    game.heal();
     assert.equal(game.hp, after);
-    assert.equal(game.healed, after - before);
+    assert.equal(game.healed, before === 40 ? null : after - before);
+    game.leaveNode();
     assert.equal(game.phase, 'map');
     game.selectNode(1);
     assert.equal(game.hp, after);
@@ -84,18 +96,18 @@ test('Rest restores 20% of missing HP rounded up and cannot be repeated', () => 
   }
 });
 
-test('Card grants three choices without combat and preserves the deck and HP', () => {
+test('Chest grants three choices without combat and preserves the deck, HP, and coins', () => {
   const game = new Game();
-  openRoute(game);
-  game.selectNode(1);
+  reach(game, [0, 1]);
   game.hp = 23;
   game.selectNode(4);
-  assert.equal(game.phase, 'reward');
+  assert.equal(game.phase, 'chest');
   assert.equal(new Set(game.rewardChoices).size, 3);
   const card = game.rewardChoices[0];
   game.reward(card);
   assert.equal(game.phase, 'map');
   assert.equal(game.deck.at(-1), card);
+  assert.equal(game.coins, 5);
   game.selectNode(7);
   assert.equal(game.phase, 'drawing');
   assert.equal(game.hp, 23);
@@ -135,6 +147,7 @@ test('defeating the Priest finishes the run immediately with the chosen route', 
   assert.deepEqual(Array.from(game.nextNodes()), []);
   assert.equal(game.events.at(-1).action, 'victory');
   assert.equal(game.hp, 40);
+  assert.equal(game.coins, 10);
 });
 
 test('the four encounters retain their repeating attack cycles and never penalize future turns for a bust', () => {
@@ -175,8 +188,9 @@ test('Quiet Counter is awarded only after the opening Gatekeeper', () => {
   const game = new Game();
   openRoute(game);
   assert.equal(game.relic, true);
-  game.selectNode(1);
+  reach(game, [1]);
   game.selectNode(3);
+  assert.equal(game.phase, 'drawing');
   game.chain = ['quick', 'quick', 'quick'];
   assert.equal(game.output().block, 2);
   game.chain = ['quick', 'quick'];
@@ -193,6 +207,7 @@ test('defeat ends the run without a reward or a next node', () => {
   game.chain = ['quick'];
   game.stand();
   assert.equal(game.phase, 'defeat');
+  assert.equal(game.coins, 0);
   assert.deepEqual(Array.from(game.nextNodes()), []);
   game.reward('fortify');
   assert.equal(game.deck.length, 12);
@@ -205,6 +220,9 @@ test('Restart clears the route and restores the repeatable opening', () => {
   assert.equal(game.hp, 40);
   assert.equal(game.deck.length, 12);
   assert.equal(game.relic, false);
+  assert.equal(game.coins, 0);
+  assert.equal(game.shopStock.length, 0);
+  assert.equal(game.shopRemoved, false);
   assert.equal(game.phase, 'map');
   assert.equal(game.route.length, 0);
   assert.deepEqual(Array.from(game.nextNodes()), [0]);
@@ -230,4 +248,57 @@ test('ordinary rewards keep three distinct choices and their lower weight for lo
     if (CARDS[choices[0]].point < 4) lowFirst++;
   }
   assert.ok(lowFirst / 20000 > 0.19 && lowFirst / 20000 < 0.23, `low-point rate: ${lowFirst / 20000}`);
+});
+
+test('victories pay coins immediately and skipping a card does not change the balance', () => {
+  const game = new Game();
+  assert.equal(game.coins, 0);
+  game.selectNode(0);
+  defeatEnemy(game);
+  assert.equal(game.coins, 5);
+  game.stand();
+  game.reward(null);
+  assert.equal(game.coins, 5);
+  reach(game, [2, 4]);
+  assert.equal(game.coins, 10);
+  game.selectNode(8);
+  defeatEnemy(game);
+  assert.equal(game.coins, 20);
+  game.reward(game.rewardChoices[0]);
+  assert.equal(game.coins, 20);
+});
+
+test('Shop has five unique cards and charges only for valid purchases and one removal', () => {
+  const game = new Game();
+  reach(game, [0, 2, 5, 8]);
+  assert.equal(game.coins, 25);
+  game.selectNode(12);
+  assert.equal(game.phase, 'shop');
+  const stock = game.shopStock;
+  assert.equal(new Set(stock.map(item => item.card)).size, 5);
+  assert.deepEqual(Array.from(stock, item => item.price), [5, 5, 5, 8, 8]);
+  assert.ok(stock.every(item => item.price === (CARDS[item.card].point < 4 ? 8 : 5)));
+
+  game.removeCard('quick');
+  assert.equal(game.coins, 25);
+  const originalCopies = game.deck.filter(card => card === 'precision').length;
+  game.removeCard('precision');
+  game.removeCard('precision');
+  assert.equal(game.coins, 15);
+  assert.equal(game.deck.filter(card => card === 'precision').length, originalCopies - 1);
+
+  game.buyCard(stock[3].card);
+  game.buyCard(stock[3].card);
+  game.buyCard(stock[4].card);
+  game.buyCard(stock[0].card);
+  assert.equal(game.coins, 2);
+  assert.equal(game.deck.length, 13);
+  assert.deepEqual(Array.from(stock, item => item.sold), [true, false, false, true, false]);
+  game.leaveNode();
+  assert.deepEqual(Array.from(game.nextNodes()), [14]);
+  game.selectNode(14);
+  assert.equal(game.phase, 'chest');
+  game.reward(null);
+  assert.equal(game.coins, 2);
+  assert.deepEqual(Array.from(game.nextNodes()), [15]);
 });
