@@ -10,16 +10,17 @@ offline without installing dependencies or starting a server.
 
 Select **Start Game**, then **Start** on the map to fight Gatekeeper. After
 the fight, choose a highlighted node connected to the last one you visited.
-Your HP, deck, and Quiet Counter relic carry forward. Use **View deck** on
+Your HP, deck, coins, and Quiet Counter relic carry forward. Use **View deck** on
 the map or the draw pile during combat to inspect your cards.
 
 | Node | What happens |
 | --- | --- |
-| Start | Fight Gatekeeper. Earn Quiet Counter after resolving the first card reward. |
-| Fight | Fight a fixed Gatekeeper or Candle-Eye Slug. Choose one of three cards or skip. |
-| Card | Choose one of three cards or skip, without fighting. |
-| Rest | Restore 20% of missing HP, rounded up. Maximum HP is 40. |
-| Elite | Fight a stronger Slug with 38 HP and attacks of 7, 9, and 6. At least one of the three reward cards has 1–3 Point. You can skip. |
+| Start | Fight Gatekeeper. Earn 5 coins and get Quiet Counter after resolving the first card reward. |
+| Fight | Fight a fixed Gatekeeper or Candle-Eye Slug. Win 5 coins and choose one of three cards or skip. |
+| Chest | Choose one of three cards or skip, without fighting. |
+| Shop | Buy one or more of five cards for 5 or 8 coins, or pay 10 coins to remove one card once per shop. |
+| Rest | Select Heal once to restore 20% of missing HP, rounded up. Maximum HP is 40. |
+| Elite | Fight a stronger Slug with 38 HP and attacks of 7, 9, and 6. Win 10 coins. At least one of the three reward cards has 1–3 Point. You can skip. |
 | Boss | Defeat the Deer-Bone Priest to finish the run and see the route you took. |
 
 The starting deck has three each of the 5, 6, 7, and 8 Point cards. Regular
@@ -53,7 +54,7 @@ node --test tests/game.test.cjs
 ```
 
 The tests cover map connections and reachability, combat and reward rules,
-HP and deck carryover, Rest, Elite rewards, defeat, victory, and restart.
+HP and deck carryover, Chest, Rest, Shop, coins, Elite rewards, defeat, victory, and restart.
 
 The map was also checked in Microsoft Edge at desktop (1440 × 960) and
 mobile (390 × 844) sizes, including a complete desktop run through an Elite.
