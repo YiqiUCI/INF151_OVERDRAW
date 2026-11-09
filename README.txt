@@ -1,47 +1,20 @@
-OVERDRAW - Three-Encounter Playtest (v1.4)
+OVERDRAW - Route Map Playtest
 
-HOW TO PLAY
-Open OVERDRAW.html in a browser. All art and audio are embedded, so it works
-offline without a server. H draws, S stands, and N starts the next turn. Click the left draw pile to view the deck.
+Open OVERDRAW.html in a browser to play offline. Select Start Game, then Start
+on the map to fight Gatekeeper. After winning, pick a highlighted connected
+node. Fight and Elite give card rewards, Card gives a free reward, and Rest
+heals 20% of missing HP (rounded up). Defeat the Boss to see your final route.
 
-ENCOUNTERS
-1. Gatekeeper: 24 HP; attacks repeat 5, 7, 4.
-2. Candle-Eye Slug: 32 HP; attacks repeat 6, 8, 5.
-3. Deer-Bone Priest (Boss): 42 HP; attacks repeat 7, 10, 8.
-
-All three use the original combat rules, animations, and audio feedback.
-Unique Boss mechanics are deferred. Busts do not strengthen future attacks.
-
-The starting deck contains three each of the 5, 6, 7, and 8 Point cards.
-Each defeated enemy offers three random cards or Skip; cards under 4 Point
-have one-third the weight of higher-point cards in each draw.
-HP and earned cards carry forward. Quiet Counter is acquired once after the
-Gatekeeper. The final Boss offers a reward before the victory screen.
-
-SFX, Music, and the volume slider control audio. The first interaction unlocks
-music. Reduced-motion preferences disable card flights and monster breathing.
-Restart offers a fresh shuffle or the original repeatable opening.
-
-See README.md for controls, rules, and the automated test command.
+H draws, S stands, and N starts the next turn. The map's View deck button
+and the combat draw pile show your cards. See README.md for detailed rules.
 AUDIO_CREDITS.txt, AUDIO_MANIFEST.json, and the Kenney license files list sources.
 
 ---------------------------------------------------------------------
 
-OVERDRAW - 三场战斗试玩版 v1.4
+OVERDRAW - 路线地图试玩版
 
-双击 OVERDRAW.html 即可离线游玩。图片、音乐和音效均已内嵌。
-H 抽牌，S 停牌并结算，N 进入下一回合。
+双击 OVERDRAW.html 即可离线游玩。点击开始游戏，再选择地图起点迎战守门者。
+战后沿连线选择高亮节点。战斗和精英战后有卡牌奖励，卡牌节点可直接选牌。
+休息回复 20% 的缺失生命值，向上取整。击败首领后会显示本局走过的路线。
 
-第一战：原怪 Gatekeeper，24 HP。
-第二战：烛眼蛞蝓 Candle-Eye Slug，32 HP。
-第三战：鹿骨祭司 Deer-Bone Priest，42 HP，作为 Boss。
-
-三只怪物沿用原怪的战斗规则、动画和音效反馈。Boss 专属机制后续添加。
-初始牌组为 5、6、7、8 点的卡牌各三张。点击左侧抽牌堆可查看牌组。
-每场胜利后可以从三张随机卡牌中选一张或跳过；低于 4 点的卡牌权重较低。
-血量和已获得的卡牌带入下一场。
-最终 Boss 战后同样有奖励，选取或跳过后显示通关。
-Quiet Counter 遗物只在第一战后获得一次。
-
-SFX 控制音效，Music 控制背景音乐，下方滑杆调整音乐音量。
-重新开始可选择随机牌序或原来的固定开局。
+H 抽牌，S 停牌，N 进入下一回合。在地图上点击“查看牌组”，或在战斗中点击抽牌堆。

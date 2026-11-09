@@ -6,34 +6,29 @@ Download the project and open **OVERDRAW.html** in a browser. The game,
 artwork, music, and sound effects are embedded in this file, so it works
 offline without installing dependencies or starting a server.
 
-## Three-encounter build (v1.4)
+## Route map
 
-| Encounter | Enemy | HP | Repeating attacks |
-| --- | --- | --- | --- |
-| 1 | Gatekeeper | 24 | 5, 7, 4 |
-| 2 | Candle-Eye Slug | 32 | 6, 8, 5 |
-| 3 | Deer-Bone Priest — Boss | 42 | 7, 10, 8 |
+Select **Start Game**, then **Start** on the map to fight Gatekeeper. After
+the fight, choose a highlighted node connected to the last one you visited.
+Your HP, deck, and Quiet Counter relic carry forward. Use **View deck** on
+the map or the draw pile during combat to inspect your cards.
 
-All three enemies use the original combat rules. The Priest is currently
-distinguished by its artwork, Boss label, and higher stats. Dedicated Boss
-mechanics are deferred; busts do not increase future enemy attacks.
+| Node | What happens |
+| --- | --- |
+| Start | Fight Gatekeeper. Earn Quiet Counter after resolving the first card reward. |
+| Fight | Fight a fixed Gatekeeper or Candle-Eye Slug. Choose one of three cards or skip. |
+| Card | Choose one of three cards or skip, without fighting. |
+| Rest | Restore 20% of missing HP, rounded up. Maximum HP is 40. |
+| Elite | Fight a stronger Slug with 38 HP and attacks of 7, 9, and 6. At least one of the three reward cards has 1–3 Point. You can skip. |
+| Boss | Defeat the Deer-Bone Priest to finish the run and see the route you took. |
 
-The starting deck has three each of the 5, 6, 7, and 8 Point cards.
-Every defeated enemy offers three distinct random card rewards or Skip. Cards
-below 4 Point have one-third the weight of higher-point cards in each draw.
-HP and earned cards
-carry into the next encounter. Quiet Counter is granted once, after the
-Gatekeeper. The final Boss also gives a reward; claiming or skipping it
-completes the run.
+The starting deck has three each of the 5, 6, 7, and 8 Point cards. Regular
+reward draws give cards below 4 Point one-third the weight of other cards.
 
-The new enemies share the existing breathing movement, attack and damage
-feedback, card animations, sound effects, and background music. Their original
-PNG files are in **assets/monsters/**, and copies are embedded in the game.
-
-Both portraits are enlarged and placed behind the original tabletop. The
-Priest is visible to the waist; the Slug shows its head, shoulders, cards,
-and the tops of its hands. The table edge stays fixed during breathing and
-combat feedback.
+Enemies use the existing combat rules, breathing movement, attack and
+damage feedback, card animations, sound effects, and background music.
+The Slug and Priest portraits are in **assets/monsters/** and embedded in
+the game. Their portraits appear behind the tabletop during combat.
 
 ## Controls
 
@@ -57,13 +52,11 @@ With Node.js installed, run:
 node --test tests/game.test.cjs
 ```
 
-The tests cover encounter order, all three reward screens, final victory,
-HP and deck carryover, attack cycles, busts, defeated-enemy retaliation,
-duplicate reward prevention, Quiet Counter, defeat, and restart.
+The tests cover map connections and reachability, combat and reward rules,
+HP and deck carryover, Rest, Elite rewards, defeat, victory, and restart.
 
-The three-encounter flow was also exercised in headless Microsoft Edge.
-Desktop (1440 × 1100) and mobile (390 × 844) layouts were checked. Actual
-listening volume and game balance still need player testing.
+The map was also checked in Microsoft Edge at desktop (1440 × 960) and
+mobile (390 × 844) sizes, including a complete desktop run through an Elite.
 
 Audio sources and licenses are listed in **AUDIO_CREDITS.txt** and
 **AUDIO_MANIFEST.json**. The Kenney license files are included.
