@@ -302,3 +302,83 @@ test('Shop has five unique cards and charges only for valid purchases and one re
   assert.equal(game.coins, 2);
   assert.deepEqual(Array.from(game.nextNodes()), [15]);
 });
+
+test('fresh maps vary nodes and connections while every node stays reachable without crossed paths', () => {
+  const layouts = new Set(), connections = new Set();
+  const template = JSON.stringify(ROUTE);
+  for (let run = 0; run < 1000; run++) {
+    const game = new Game();
+    game.restart(true);
+    const map = game.map;
+    assert.equal(map.length, 16);
+    assert.equal(map[0].type, 'start');
+    assert.equal(map[0].enemy, 0);
+    assert.equal(map[15].type, 'boss');
+    assert.equal(map[15].enemy, 2);
+    const reachable = new Set([0]);
+    for (let floor = 0; floor <= 6; floor++) {
+      const row = map.filter(node => node.floor === floor);
+      assert.deepEqual(Array.from(row, node => node.type).sort(),
+        Array.from(ROUTE.filter(node => node.floor === floor), node => node.type).sort());
+      for (const node of row) {
+        if (floor === 6) { assert.equal(node.next.length, 0); continue; }
+        assert.ok(node.next.length >= 1 && node.next.length <= 2);
+        assert.equal(new Set(node.next).size, node.next.length);
+        for (const to of node.next) {
+          assert.equal(map[to].floor, floor + 1);
+          if (reachable.has(map.indexOf(node))) reachable.add(to);
+          for (const other of row) for (const otherTo of other.next) {
+            assert.ok((node.x - other.x) * (map[to].x - map[otherTo].x) >= 0);
+          }
+        }
+      }
+    }
+    assert.equal(reachable.size, 16);
+    layouts.add(JSON.stringify(map.map(node => [node.type, node.enemy])));
+    connections.add(JSON.stringify(map.map(node => node.next)));
+    const initialMap = JSON.stringify(map);
+    openRoute(game);
+    assert.equal(JSON.stringify(game.map), initialMap);
+    const next = game.nextNodes()[0];
+    game.selectNode(next);
+    assert.equal(game.phase, NODE_PHASE(game.map[next].type));
+    const exported = game.export().runs.at(-1);
+    assert.equal(JSON.stringify(exported.map), initialMap);
+    game.restart(true);
+    assert.equal(JSON.stringify(game.archive.at(-1).map), initialMap);
+  }
+  assert.ok(layouts.size > 100);
+  assert.ok(connections.size > 20);
+  assert.equal(JSON.stringify(ROUTE), template);
+  function NODE_PHASE(type) { return ['rest', 'shop', 'chest'].includes(type) ? type : 'drawing'; }
+});
+
+test('deck views preserve every copy and exclude current chain and discards from remaining cards', () => {
+  const game = new Game();
+  game.selectNode(0);
+  const order = Array.from(game.draw);
+  assert.equal(game.viewCards().length, 12);
+  assert.equal(game.viewCards(true).filter(key => key === 'precision').length, 3);
+  assert.deepEqual(Array.from(game.draw), order);
+  game.hit();
+  assert.equal(game.viewCards().length, 11);
+  assert.equal(game.viewCards().filter(key => key === 'precision').length, 2);
+  assert.equal(game.viewCards(true).filter(key => key === 'precision').length, 3);
+  game.stand();
+  game.next();
+  assert.equal(game.discard.length, 1);
+  game.hit();
+  assert.equal(game.viewCards().length, 10);
+  assert.equal(game.viewCards().filter(key => key === 'heavy').length, 2);
+  assert.equal(game.viewCards(true).length, 12);
+  assert.equal(game.viewCards().length + game.chain.length + game.discard.length, game.deck.length);
+
+  game.draw = [];
+  game.discard = ['quick', 'brace'];
+  assert.equal(game.viewCards().length, 0);
+  game.hit();
+  assert.equal(game.viewCards().length, 1);
+  assert.equal(game.discard.length, 0);
+  const points = Array.from(game.viewCards(true), key => CARDS[key].point);
+  assert.deepEqual(points, [...points].sort((a, b) => a - b));
+});
